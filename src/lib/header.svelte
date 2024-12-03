@@ -10,7 +10,7 @@
     // Configurar título dinámico
     const path = window.location.pathname;
     if (path === "/buscarclientes") {
-      titulo = "Buscar Clientes";
+      titulo = "Clientes";
     } else if (path === "/") {
       titulo = "Pedidos";
     } else if (path === "/miperfil") {
@@ -56,7 +56,7 @@
 <header>
   <h1 id="titulo-pagina">{titulo}</h1>
   <nav>
-    <Link class="enlace-nav" to="/buscarclientes">Buscar Clientes</Link>
+    <Link class="enlace-nav" to="/buscarclientes">Clientes</Link>
     <Link class="enlace-nav" to="/">Pedidos</Link>
     <Link class="enlace-nav" to="/inventario">Inventario</Link>
     <Link class="enlace-nav" to="/miperfil">Mi Perfil</Link>
