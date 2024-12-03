@@ -1,0 +1,92 @@
+[
+    {
+        "ID": "DCM-345",
+        "nombre_producto": "Laptop Pro X",
+        "fabricante": "TechCorp",
+        "cantidad": "50",
+        "pais_fabricacion": "USA",
+        "precio_unitario": "1200",
+        "foto": "/img/laptop.png"
+    },
+    {
+        "ID": "DCM-346",
+        "nombre_producto": "Tablet Y",
+        "fabricante": "Innovatech",
+        "cantidad": "100",
+        "pais_fabricacion": "China",
+        "precio_unitario": "300",
+        "foto": "/img/tablet.png"
+    },
+    {
+        "ID": "DCM-347",
+        "nombre_producto": "Smartphone Z",
+        "fabricante": "MobileWorld",
+        "cantidad": "200",
+        "pais_fabricacion": "South Korea",
+        "precio_unitario": "800",
+        "foto": "/img/movil.png"
+    },
+    {
+        "ID": "DCM-348",
+        "nombre_producto": "Wireless Headphones",
+        "fabricante": "AudioMax",
+        "cantidad": "150",
+        "pais_fabricacion": "Germany",
+        "precio_unitario": "150",
+        "foto": "/img/cascos.png"
+     },
+    {
+        "ID": "DCM-349",
+        "nombre_producto": "Gaming Console",
+        "fabricante": "GameTech",
+        "cantidad": "60",
+        "pais_fabricacion": "Japan",
+        "precio_unitario": "500",
+        "foto": "/img/play5.png"
+    },
+    {
+        "ID": "DCM-350",
+        "nombre_producto": "Smartwatch Q",
+        "fabricante": "WearTech",
+        "cantidad": "80",
+        "pais_fabricacion": "Switzerland",
+        "precio_unitario": "400",
+        "foto": "/img/reloj.png"
+    },
+    {
+        "ID": "DCM-351",
+        "nombre_producto": "Camera D",
+        "fabricante": "PhotoPro",
+        "cantidad": "120",
+        "pais_fabricacion": "Japan",
+        "precio_unitario": "1000",
+        "foto": "/img/camara.png"
+    },
+    {
+        "ID": "DCM-352",
+        "nombre_producto": "Electric Scooter",
+        "fabricante": "RideEasy",
+        "cantidad": "70",
+        "pais_fabricacion": "Netherlands",
+        "precio_unitario": "700",
+        "foto": "/img/patin.png"
+    },
+    {
+        "ID": "DCM-353",
+        "nombre_producto": "4K Monitor",
+        "fabricante": "ScreenVision",
+        "cantidad": "40",
+        "pais_fabricacion": "South Korea",
+        "precio_unitario": "350",
+        "foto": "/img/monitor.png"
+    },
+    {
+        "ID": "DCM-354",
+        "nombre_producto": "External SSD",
+        "fabricante": "DataPlus",
+        "cantidad": "300",
+        "pais_fabricacion": "USA",
+        "precio_unitario": "200",
+        "foto": "/img/ssd.png"
+    }
+]

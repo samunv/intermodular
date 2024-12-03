@@ -1,0 +1,82 @@
+[
+    {
+        "numero_pedido": "001",
+        "fecha_de_compra": "15/11/2024",
+        "fecha_de_entrega": "20/11/2024",
+        "nombre_producto": "Laptop Pro X",
+        "nombre_cliente": "Paula",
+        "forma_de_pago": "Tarjeta de crédito"
+    },
+    {
+        "numero_pedido": "002",
+        "fecha_de_compra": "16/11/2024",
+        "fecha_de_entrega": "21/11/2024",
+        "nombre_producto": "Smartphone Z",
+        "nombre_cliente": "Samuel",
+        "forma_de_pago": "PayPal"
+    },
+    {
+        "numero_pedido": "003",
+        "fecha_de_compra": "17/11/2024",
+        "fecha_de_entrega": "22/11/2024",
+        "nombre_producto": "Wireless Headphones",
+        "nombre_cliente": "Luis",
+        "forma_de_pago": "Transferencia bancaria"
+    },
+    {
+        "numero_pedido": "004",
+        "fecha_de_compra": "18/11/2024",
+        "fecha_de_entrega": "23/11/2024",
+        "nombre_producto": "4K Monitor",
+        "nombre_cliente": "Carlos",
+        "forma_de_pago": "Efectivo"
+    },
+    {
+        "numero_pedido": "005",
+        "fecha_de_compra": "19/11/2024",
+        "fecha_de_entrega": "24/11/2024",
+        "nombre_producto": "Smartwatch Q",
+        "nombre_cliente": "Jorge",
+        "forma_de_pago": "Tarjeta de débito"
+    },
+    {
+        "numero_pedido": "006",
+        "fecha_de_compra": "20/11/2024",
+        "fecha_de_entrega": "25/11/2024",
+        "nombre_producto": "Tablet Y",
+        "nombre_cliente": "Ana",
+        "forma_de_pago": "PayPal"
+    },
+    {
+        "numero_pedido": "007",
+        "fecha_de_compra": "21/11/2024",
+        "fecha_de_entrega": "26/11/2024",
+        "nombre_producto": "Electric Scooter",
+        "nombre_cliente": "Mateo",
+        "forma_de_pago": "Transferencia bancaria"
+    },
+    {
+        "numero_pedido": "008",
+        "fecha_de_compra": "22/11/2024",
+        "fecha_de_entrega": "27/11/2024",
+        "nombre_producto": "Laptop Pro X",
+        "nombre_cliente": "TechCorp",
+        "forma_de_pago": "Tarjeta de crédito"
+    },
+    {
+        "numero_pedido": "009",
+        "fecha_de_compra": "23/11/2024",
+        "fecha_de_entrega": "28/11/2024",
+        "nombre_producto": "Gaming Console",
+        "nombre_cliente": "Innovatech",
+        "forma_de_pago": "Efectivo"
+    },
+    {
+        "numero_pedido": "010",
+        "fecha_de_compra": "24/11/2025",
+        "fecha_de_entrega": "29/11/2025",
+        "nombre_producto": "Camera D",
+        "nombre_cliente": "GlobalTech",
+        "forma_de_pago": "PayPal"
+    }
+]

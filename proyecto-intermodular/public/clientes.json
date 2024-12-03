@@ -1,0 +1,72 @@
+[
+  {
+    "nombre": "Paula",
+    "pais": "España",
+    "foto": "https://cdn-icons-png.flaticon.com/512/711/711769.png",
+    "tipo": "individual",
+    "telefono": "+34 611 234 567"
+  },
+  {
+    "nombre": "Samuel",
+    "pais": "España",
+    "foto": "https://cdn-icons-png.flaticon.com/512/711/711769.png",
+    "tipo": "individual",
+    "telefono": "+34 622 345 678"
+  },
+  {
+    "nombre": "Luis",
+    "pais": "Argentina",
+    "foto": "https://cdn-icons-png.flaticon.com/512/711/711769.png",
+    "tipo": "individual",
+    "telefono": "+54 11 2345 6789"
+  },
+  {
+    "nombre": "Carlos",
+    "pais": "Chile",
+    "foto": "https://cdn-icons-png.flaticon.com/512/711/711769.png",
+    "tipo": "individual",
+    "telefono": "+56 9 9876 5432"
+  },
+  {
+    "nombre": "Jorge",
+    "pais": "Estados Unidos",
+    "foto": "https://cdn-icons-png.flaticon.com/512/711/711769.png",
+    "tipo": "individual",
+    "telefono": "+1 202 555 0123"
+  },
+  {
+    "nombre": "Ana",
+    "pais": "México",
+    "foto": "https://cdn-icons-png.flaticon.com/512/711/711769.png",
+    "tipo": "individual",
+    "telefono": "+52 55 1234 5678"
+  },
+  {
+    "nombre": "Mateo",
+    "pais": "Perú",
+    "foto": "https://cdn-icons-png.flaticon.com/512/711/711769.png",
+    "tipo": "individual",
+    "telefono": "+51 1 234 5678"
+  },
+  {
+    "nombre": "TechCorp",
+    "pais": "España",
+    "foto": "https://cdn-icons-png.flaticon.com/512/484/484624.png",
+    "tipo": "compañía",
+    "telefono": "+34 900 123 456"
+  },
+  {
+    "nombre": "Innovatech",
+    "pais": "México",
+    "foto": "https://cdn-icons-png.flaticon.com/512/484/484624.png",
+    "tipo": "compañía",
+    "telefono": "+52 800 987 6543"
+  },
+  {
+    "nombre": "GlobalTech",
+    "pais": "Estados Unidos",
+    "foto": "https://cdn-icons-png.flaticon.com/512/484/484624.png",
+    "tipo": "compañía",
+    "telefono": "+1 888 555 6789"
+  }
+]
