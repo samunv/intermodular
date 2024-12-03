@@ -1,10 +1,10 @@
-const express = require('express');
+import express from 'express';
 const app = express();
 
-app.get('/api/data', (req, res) => {
+app.get('/', (req, res) => {
   res.json({ message: 'Hello from the backend!' });
 });
 
 app.listen(3050, () => {
-  console.log('Backend listening on port https://localhost:3050');
+  console.log('Backend listening on port http://localhost:3050');
 });
