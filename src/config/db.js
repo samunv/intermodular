@@ -2,10 +2,10 @@ const mysql = require('mysql2');
 
 // Configuración de la conexión a la base de datos
 const db = mysql.createConnection({
-  host: 'localhost',        // O tu host de MySQL
-  user: 'root',             // Usuario de la base de datos
-  password: '',     // Contraseña de la base de datos
-  database: 'bdintermodular' // Nombre de la base de datos
+  host: 'localhost',        
+  user: 'root',             
+  password: '',    
+  database: 'bdintermodular'
 });
 
 // Verificación de la conexión
