@@ -1,21 +1,19 @@
 <script>
-  let productos = JSON.parse(sessionStorage.getItem("productos")) || [];
+  let productos = [];
   let cargando = true;
   let activarFiltros = false;
   let valor = "";
   let filtroFabricante = ""; // Estado del filtro ("" para mostrar todos)
-  let productosEliminados =
-    JSON.parse(sessionStorage.getItem("productosEliminados")) || [];
 
   const cargarProductos = async () => {
     try {
-      const response = await fetch("/productos.json");
-      productos = await response.json();
+      const response = await fetch("http://localhost:3060/productos");
+      if (!response.ok) {
+        throw new Error("Error al cargar los productos del servidor");
+      }
+      const datos = await response.json();
 
-      productos = productos.filter(
-        (producto) => !productosEliminados.includes(producto.nombre_producto)
-      );
-
+      productos = datos;
       cargando = false;
     } catch (error) {
       console.error("Error al cargar los datos:", error);
@@ -27,7 +25,7 @@
 
   const productosFiltrados = () => {
     return productos.filter((producto) => {
-      const coincideBusqueda = producto.nombre_producto
+      const coincideBusqueda = producto.nombre
         .toLowerCase()
         .includes(valor.toLowerCase());
       const coincideFabricante =
@@ -41,7 +39,6 @@
   let overlayActivo = false;
 
   let productoSeleccionado = null;
-  let ventanaEliminarActiva = false;
 
   function mostrarInfo(producto) {
     productoSeleccionado = producto;
@@ -51,30 +48,8 @@
 
   function cerrarVentana() {
     ventanaActiva = false;
-    ventanaEliminarActiva = false;
     overlayActivo = false;
     productoSeleccionado = null;
-  }
-
-  function activarVentanaEliminar(producto) {
-    productoSeleccionado = producto;
-    overlayActivo = true;
-    ventanaEliminarActiva = true;
-  }
-
-  function eliminarProducto(producto) {
-    alert("Se ha eliminado el producto: " + producto.nombre_producto);
-    productosEliminados.push(producto.nombre_producto);
-    sessionStorage.setItem(
-      "productosEliminados",
-      JSON.stringify(productosEliminados)
-    );
-
-    productos = productos.filter(
-      (p) => p.nombre_producto !== producto.nombre_producto
-    );
-
-    window.location.reload();
   }
 
   function exportarProductosCSV() {
@@ -134,10 +109,10 @@
   {:else}
     {#each productosFiltrados() as producto}
       <div class="producto-card">
-        <img src={producto.foto} alt={producto.nombre_producto} width="100" />
-        <h3>{producto.nombre_producto}</h3>
+        <img src={producto.foto} alt={producto.nombre} width="100" />
+        <h3>{producto.nombre}</h3>
         <p>Fabricante: {producto.fabricante}</p>
-        <p>País: {producto.pais_fabricacion}</p>
+        <p>Stock: {producto.cantidad}</p>
         <p>Precio: ${producto.precio_unitario}</p>
         <!-- Contenedor de iconos -->
         <div class="iconos-productos">
@@ -147,12 +122,6 @@
             alt="Detalles"
             on:click={() => mostrarInfo(producto)}
           />
-          <!-- Icono para eliminar producto -->
-          <img
-            src="/img/eliminar.png"
-            alt="Eliminar"
-            on:click={() => activarVentanaEliminar(producto)}
-          />
         </div>
       </div>
     {/each}
@@ -161,7 +130,7 @@
 
 {#if ventanaActiva}
   <div id="detalle-producto">
-    <h2>{productoSeleccionado.nombre_producto}</h2>
+    <h2>{productoSeleccionado.nombre}</h2>
     <p>Fabricante: {productoSeleccionado.fabricante}</p>
     <p>Cantidad: {productoSeleccionado.cantidad}</p>
     <p>País: {productoSeleccionado.pais_fabricacion}</p>
@@ -170,25 +139,10 @@
   </div>
 {/if}
 
-{#if ventanaEliminarActiva}
-  <div id="confirmar-eliminacion">
-    <h2>
-      ¿Estás seguro de que quieres eliminar {productoSeleccionado.nombre_producto}
-      del inventario?
-    </h2>
-    <div class="botones-eliminar-producto">
-      <button on:click={() => eliminarProducto(productoSeleccionado)}>Eliminar</button
-      >
-      <button on:click={cerrarVentana}>Cancelar</button>
-    </div>
-  </div>
-{/if}
-
 <div
   id="overlay"
-  class={overlayActivo ? "overlay-activo" : "o verlay-inactivo"}
+  class={overlayActivo ? "overlay-activo" : "overlay-inactivo"}
 ></div>
 
 <button class="btn-csv" on:click={exportarProductosCSV}
-  ><img src="/img/archivo-excel.png" alt="" width="30" height="30" /></button
->
+  ><img src="/img/archivo-excel.png" alt="" width="30" height="30" /></button>

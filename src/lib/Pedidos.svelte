@@ -1,19 +1,18 @@
 <script>
-  let pedidos = JSON.parse(sessionStorage.getItem("pedidos")) || [];
+  let pedidos = [];
   let cargando = true;
   let valor = "";
   let filtroTipo = ""; // Estado del filtro ("" para mostrar todos)
-  let pedidosEliminados =
-    JSON.parse(sessionStorage.getItem("pedidosEliminados")) || [];
 
   const cargarPedidos = async () => {
     try {
-      const response = await fetch("/pedidos.json");
-      pedidos = await response.json();
+      const response = await fetch("http://localhost:3060/pedidos"); // Fetch al endpoint
+      if (!response.ok) {
+        throw new Error("Error al obtener los pedidos");
+      }
+      const data = await response.json();
 
-      pedidos = pedidos.filter(
-        (pedido) => !pedidosEliminados.includes(pedido.numero_pedido)
-      );
+      pedidos = data;
 
       cargando = false;
     } catch (error) {
@@ -26,10 +25,10 @@
 
   const pedidosFiltrados = () => {
     return pedidos.filter((pedido) => {
-      const coincideBusqueda = pedido.fecha_de_entrega
+      const coincideBusqueda = pedido.fecha_entrega
         .toLowerCase()
         .includes(valor.toLowerCase());
-      const coincideTipo = filtroTipo === "" || pedido.tipo === filtroTipo;
+      const coincideTipo = filtroTipo === "" || pedido.fecha_entrega === filtroTipo;
 
       return coincideBusqueda && coincideTipo;
     });
@@ -61,15 +60,8 @@
   }
 
   function eliminarPedido(pedido) {
-    alert("Se ha eliminado el pedido número: " + pedido.numero_pedido);
-    pedidosEliminados.push(pedido.numero_pedido);
-    sessionStorage.setItem(
-      "pedidosEliminados",
-      JSON.stringify(pedidosEliminados)
-    );
-
-    pedidos = pedidos.filter((p) => p.numero_pedido !== pedido.numero_pedido);
-
+    alert("Se ha eliminado el pedido número: " + pedido.numero);
+    pedidos = pedidos.filter((p) => p.numero !== pedido.numero);
     window.location.reload();
   }
 
@@ -134,9 +126,9 @@
       <div class="pedido-card">
         <h3>{pedido.nombre_cliente}</h3>
         <p>Producto: {pedido.nombre_producto}</p>
-        <p>Entrega: {pedido.fecha_de_entrega}</p>
+        <p>Entrega: {pedido.fecha_entrega}</p>
         <div class="botones-card-pedidos">
-          <button onclick={() => mostrarInfo(pedido)}
+          <button on:click={() => mostrarInfo(pedido)}
             ><img
               src="/img/iconoinfo.png"
               alt="Info"
@@ -144,7 +136,7 @@
               height="24"
             /></button
           >
-          <button onclick={() => activarVentanaEliminar(pedido)}
+          <button on:click={() => activarVentanaEliminar(pedido)}
             ><img
               src="/img/eliminar.png"
               alt="Eliminar"
@@ -161,12 +153,12 @@
 <div id="ventana" style="display: {ventanaActiva ? 'block' : 'none'}">
   <h3>Detalles del Pedido</h3>
   {#if pedidoSeleccionado}
-    <p>Número de pedido: {pedidoSeleccionado.numero_pedido}</p>
+    <p>Número de pedido: {pedidoSeleccionado.numero}</p>
     <p>Cliente: {pedidoSeleccionado.nombre_cliente}</p>
     <p>Producto: {pedidoSeleccionado.nombre_producto}</p>
-    <p>Fecha de entrega: {pedidoSeleccionado.fecha_de_entrega}</p>
+    <p>Fecha de entrega: {pedidoSeleccionado.fecha_entrega}</p>
     <p>Forma de pago: {pedidoSeleccionado.forma_de_pago}</p>
-    <button onclick={cerrarVentana}>Cerrar</button>
+    <button on:click={cerrarVentana}>Cerrar</button>
   {/if}
 </div>
 
@@ -176,17 +168,15 @@
 >
   <h2>¿Estas seguro de que quieres eliminar el pedido?</h2>
   <div id="caja-botones">
-    <button onclick={() => eliminarPedido(pedidoSeleccionado)}>Confirmar</button
-    >
-    <button onclick={cerrarVentana}>Cancelar</button>
+    <button on:click={() => eliminarPedido(pedidoSeleccionado)}>Confirmar</button>
+    <button on:click={cerrarVentana}>Cancelar</button>
   </div>
 </div>
 
 <div
   id="overlay"
-  class={overlayActivo ? "overlay-activo" : "o verlay-inactivo"}
+  class={overlayActivo ? "overlay-activo" : "overlay-inactivo"}
 ></div>
 
-<button class="btn-csv" onclick={exportarPedidosCSV}
-  ><img src="/img/archivo-excel.png" alt="" width="30" height="30" /></button
->
+<button class="btn-csv" on:click={exportarPedidosCSV}
+  ><img src="/img/archivo-excel.png" alt="" width="30" height="30" /></button>
