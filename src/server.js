@@ -75,7 +75,18 @@ const obtenerProductos = async () => {
 
 const eliminarDato = async (tabla, id) => {
   try {
-    const eliminar = await db.query(`DELETE FROM ?? WHERE id = ?`, [tabla, id]);
+    const columnasId = {
+      clientes: "ID",
+      productos: "ID",
+      pedidos: "numero", // Ejemplo para 'pedidos'
+    };
+    
+    const columnaId = columnasId[tabla];
+    if (!columnaId) {
+      return "Columna no encontrada";
+    }
+    
+    const eliminar = await db.query(`DELETE FROM ?? WHERE ?? = ?`, [tabla, columnaId, id]);
     return eliminar;
   } catch (error) {
     console.error("Error al obtener los productos:", error);
@@ -121,9 +132,26 @@ app.get("/productos", async (req, res) => {
   }
 });
 
+// Endpoint para eliminar clientes
+app.get("/eliminar/:tabla/:id", async (req, res) => {
+  try {
+    const {tabla, id} = req.params;
+    const eliminar = await eliminarDato(tabla, id);
+    res.json(eliminar);
+  } catch (error) {
+    console.error("Error al manejar la solicitud:", error);
+    res
+      .status(500)
+      .json({
+        error: "Error interno al obtener los clientes",
+        detalle: error.message,
+      });
+  }
+});
+
 
 
 // Iniciar el servidor
-app.listen(3060, () => {
-  console.log("Backend listening on port http://localhost:3060");
+app.listen(3070, () => {
+  console.log("Backend listening on port http://localhost:3070");
 });

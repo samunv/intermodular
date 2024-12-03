@@ -7,7 +7,7 @@
 
   const cargarProductos = async () => {
     try {
-      const response = await fetch("http://localhost:3060/productos");
+      const response = await fetch("http://localhost:3070/productos");
       if (!response.ok) {
         throw new Error("Error al cargar los productos del servidor");
       }

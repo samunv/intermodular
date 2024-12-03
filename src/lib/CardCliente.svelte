@@ -12,11 +12,13 @@
   // Función para cargar los clientes desde el endpoint
   const cargarClientes = async () => {
     try {
-      const response = await fetch("http://localhost:3060/clientes");
+      const response = await fetch("http://localhost:3070/clientes");
 
       // Verificar si la respuesta es exitosa
       if (!response.ok) {
-        throw new Error(`Error al obtener los clientes: ${response.statusText}`);
+        throw new Error(
+          `Error al obtener los clientes: ${response.statusText}`
+        );
       }
 
       // Asignar los datos obtenidos a la variable clientes
@@ -37,6 +39,29 @@
       const coincideTipo = filtroTipo === "" || cliente.entidad === filtroTipo;
       return coincideBusqueda && coincideTipo;
     });
+  };
+
+  const eliminarCliente = async (cliente) => {
+    try {
+      const response = await fetch(
+        "http://localhost:3070/eliminar/clientes/" + cliente.ID
+      );
+
+      // Verificar si la respuesta es exitosa
+      if (!response.ok) {
+        throw new Error(
+          `Error al obtener los clientes: ${response.statusText}`
+        );
+      }
+
+      await cargarClientes();
+      cerrarVentana();
+      window.location.reload();
+    } catch (error) {
+      console.error("Error al obtener los clientes:", error);
+    } finally {
+      cargando = false;
+    }
   };
 
   // Mostrar detalles del cliente
@@ -111,7 +136,13 @@
     {#each clientesFiltrados() as cliente}
       <div id="card" class="cards">
         <div class="foto-texto" on:click={() => mostrarInfo(cliente)}>
-          <img src="/img/defaultfoto2.webp" alt="" width="54" height="54" id="foto-perfil"/>
+          <img
+            src="/img/defaultfoto2.webp"
+            alt=""
+            width="54"
+            height="54"
+            id="foto-perfil"
+          />
           <div class="texto">
             <h3 class="nombre">{cliente.nombre}</h3>
             <p class="direccion">{cliente.pais}</p>
@@ -144,12 +175,20 @@
 <!-- Ventana de confirmación de eliminación -->
 {#if ventanaEliminarActiva}
   <div id="ventanaEliminar">
-    <h2>¿Estás seguro de que quieres eliminar a {clienteSeleccionado.nombre}?</h2>
+    <h2>
+      ¿Estás seguro de que quieres eliminar a {clienteSeleccionado.nombre}?
+    </h2>
     <div id="caja-botones">
-      <button id="btn-eliminar">Eliminar</button>
+      <button
+        id="btn-eliminar"
+        on:click={() => eliminarCliente(clienteSeleccionado)}>Eliminar</button
+      >
       <button id="btn-cerrar" on:click={cerrarVentana}>Cerrar</button>
     </div>
   </div>
 {/if}
 
-<div id="overlay" class={overlayActivo ? "overlay-activo" : "overlay-inactivo"}></div>
+<div
+  id="overlay"
+  class={overlayActivo ? "overlay-activo" : "overlay-inactivo"}
+></div>
