@@ -66,18 +66,12 @@
   const eliminarPedido = async (pedido) => {
     try {
       const response = await fetch(
-<<<<<<< HEAD
-        "http://localhost:3080/eliminar/pedidos/" + pedido.numero
-=======
         "http://localhost:3070/eliminar/pedidos/" + pedido.numero_pedido
->>>>>>> 432ddbddf9e935e2b586a29f86ae8761802ef3f1
       );
 
       // Verificar si la respuesta es exitosa
       if (!response.ok) {
-        throw new Error(
-          `Error al obtener los pedidos: ${response.statusText}`
-        );
+        throw new Error(`Error al obtener los pedidos: ${response.statusText}`);
       }
 
       await cargarPedidos();
