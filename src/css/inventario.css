@@ -1,0 +1,103 @@
+.producto-card {
+    background-color: var(--main-color);
+    margin: 20px;
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    width: 280px;
+  }
+  
+  .producto-card img {
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+  }
+  
+  .iconos-productos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .iconos-productos img {
+    width: 24px;
+    height: 24px;
+    margin: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .iconos-productos img:hover {
+    opacity: 0.5;
+  }
+  
+  
+  
+  #detalle-producto,
+  #confirmar-eliminacion {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--main-color);
+    padding: 20px;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    z-index: 1002;
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    text-align: center;
+  }
+  
+  #detalle-producto h2,
+  #confirmar-eliminacion h2 {
+    margin: 20px;
+  }
+  
+  #detalle-producto button,
+  #confirmar-eliminacion button {
+    margin: 20px;
+    padding: 8px 12px;
+    background-color: transparent;
+    font-weight: bold;
+    font-size: 16px;
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  #detalle-producto button:hover,
+  #confirmar-eliminacion button:hover {
+    opacity: 0.5;
+  }
+  
+  
+  #confirmar-eliminacion .botones-eliminar-producto button:nth-child(1) {
+    color: red;
+  }
+  
+  @media (max-width:800px) {
+  
+    .producto-card {
+      transform: scale(0.8);
+      margin: 10px;
+    }
+  
+    #confirmar-eliminacion {
+      width: 75%;
+    }
+  
+    #detalle-producto {
+      width: 75%;
+    }
+  
+  }

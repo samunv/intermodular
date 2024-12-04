@@ -1,0 +1,79 @@
+
+#contenedor-principal-pedidos {
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: stretch;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .pedido-card {
+    background-color: var(--main-color);
+    font-size: 16px;
+    margin: 20px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: var(--text-color);
+  
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .botones-card-pedidos {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .botones-card-pedidos button {
+    color: var(--text-color);
+    padding: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  
+  }
+  
+  .botones-card-pedidos button:hover {
+    opacity: 0.5;
+  }
+  
+  @media (max-width:800px) {
+    #contenedor-principal-pedidos {
+      width: 100%;
+      margin-top: 20px;
+      margin-bottom: 50px;
+    }
+  
+    .pedido-card {
+      flex-direction: column;
+      transform: scale(0.8);
+    }
+  
+    main {
+      padding: 0%;
+    }
+  
+    .botones-card-pedidos {
+      margin: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .btn-csv {
+      left: 80%;
+      top: 80%;
+      transform: scale(0.8);
+    }
+  }

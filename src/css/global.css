@@ -1,0 +1,121 @@
+:root {
+    --main-color: #333336;
+    --secondary-color: black;
+    --text-color: #cdcdcd;
+    --font-size-large: 1.5em;
+    --azul-proyecto: #0756FF;
+  }
+  
+  * {
+    padding: 0;
+    margin: 0;
+    transition: all 0.3s ease;
+  }
+
+  body {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    background-color: var(--secondary-color);
+    overflow-y: scroll;
+  }
+  
+  header {
+    background-color: var(--main-color);
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: var(--secondary-color) 1px solid;
+    z-index: 995;
+  }
+  
+  #buscador-filtros {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+  }
+  
+  #contenedor-filtros {
+    background-color: var(--main-color);
+    border-radius: 15px;
+    padding: 10px 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-top: 20px;
+    color: var(--text-color);
+    animation: fadeInSlide 0.5s ease-in-out;
+  
+  }
+  
+  /* Definir la animación de aparición */
+  @keyframes fadeInSlide {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+      /* Comienza desde arriba */
+    }
+  
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+      /* Llega a su posición original */
+    }
+  }
+  
+  /* #linea {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+  } */
+  
+  
+  
+  .filtros {
+    margin-left: 5px;
+    margin-right: 5px;
+    transition: all 0.3s ease;
+    border-radius: 5px;
+    padding: 5px;
+  }
+  
+  .filtros:hover {
+    cursor: pointer;
+  
+    background-color: #beb8b8;
+  
+  
+  }
+  
+  #buscador-filtros button {
+    margin: 0;
+  }
+  
+  
+  
+  #contenedor-buscador {
+    background-color: var(--main-color);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 10px;
+    border-radius: 15px;
+    width: 300px;
+  
+  }
+  
+  
+  
+  #contenedor-buscador input {
+    background-color: var(--main-color);
+    color: var(--text-color);
+    font-weight: bold;
+    border: 1px var(--main-color) solid;
+    width: 70%;
+  }
+  
+  #contenedor-buscador input:focus {
+    outline: none;
+  
+  }

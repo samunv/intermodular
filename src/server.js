@@ -17,7 +17,7 @@ app.use(
 const db = mysql.createPool({
   host: "localhost",
   user: "root",
-  password: "", // Añade tu contraseña si es necesario
+  password: "",
   database: "bdintermodular",
   waitForConnections: true,
   connectionLimit: 10,
@@ -73,6 +73,21 @@ const obtenerProductos = async () => {
   }
 };
 
+const actualizarCliente = async (id, pais, telefono) => {
+  try {
+    const actualizar = await db.query(`UPDATE clientes SET pais = ?, telefono= ? WHERE ID=?`, [
+      pais,
+      telefono,
+      id
+    ]);
+    return actualizar;
+
+  } catch (error) {
+    console.error("Error al obtener los productos:", error);
+    throw error;
+  }
+};
+
 const eliminarDato = async (tabla, id) => {
   try {
     const columnasId = {
@@ -80,13 +95,17 @@ const eliminarDato = async (tabla, id) => {
       productos: "ID",
       pedidos: "numero", // Ejemplo para 'pedidos'
     };
-    
+
     const columnaId = columnasId[tabla];
     if (!columnaId) {
       return "Columna no encontrada";
     }
-    
-    const eliminar = await db.query(`DELETE FROM ?? WHERE ?? = ?`, [tabla, columnaId, id]);
+
+    const eliminar = await db.query(`DELETE FROM ?? WHERE ?? = ?`, [
+      tabla,
+      columnaId,
+      id,
+    ]);
     return eliminar;
   } catch (error) {
     console.error("Error al obtener los productos:", error);
@@ -101,12 +120,10 @@ app.get("/clientes", async (req, res) => {
     res.json(clientes);
   } catch (error) {
     console.error("Error al manejar la solicitud:", error);
-    res
-      .status(500)
-      .json({
-        error: "Error interno al obtener los clientes",
-        detalle: error.message,
-      });
+    res.status(500).json({
+      error: "Error interno al obtener los clientes",
+      detalle: error.message,
+    });
   }
 });
 
@@ -135,21 +152,38 @@ app.get("/productos", async (req, res) => {
 // Endpoint para eliminar clientes
 app.get("/eliminar/:tabla/:id", async (req, res) => {
   try {
-    const {tabla, id} = req.params;
+    const { tabla, id } = req.params;
     const eliminar = await eliminarDato(tabla, id);
     res.json(eliminar);
   } catch (error) {
     console.error("Error al manejar la solicitud:", error);
-    res
-      .status(500)
-      .json({
-        error: "Error interno al obtener los clientes",
-        detalle: error.message,
-      });
+    res.status(500).json({
+      error: "Error interno al obtener los clientes",
+      detalle: error.message,
+    });
   }
 });
 
-
+app.get(
+  "/actualizar/clientes/:id/:pais/:telefono",
+  async (req, res) => {
+    try {
+      const { id, pais, telefono } = req.params;
+      const actualizar = await actualizarCliente(
+        id,
+        pais,
+        telefono
+      );
+      res.json(actualizar);
+    } catch (error) {
+      console.error("Error al manejar la solicitud:", error);
+      res.status(500).json({
+        error: "Error interno al obtener los clientes",
+        detalle: error.message,
+      });
+    }
+  }
+);
 
 // Iniciar el servidor
 app.listen(3070, () => {

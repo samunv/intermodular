@@ -1,4 +1,7 @@
 <script>
+  import "../css/clientes.css";
+  import "../css/global.css";
+  
   let clientes = [];
   let cargando = true;
   let activarFiltros = false;
@@ -8,6 +11,7 @@
   let overlayActivo = false;
   let clienteSeleccionado = null;
   let ventanaEliminarActiva = false;
+  let ventanaEditarActiva = false;
 
   // Función para cargar los clientes desde el endpoint
   const cargarClientes = async () => {
@@ -64,6 +68,34 @@
     }
   };
 
+  const actualizarCliente = async (cliente) => {
+    try {
+      const response = await fetch(
+        "http://localhost:3070/actualizar/clientes/" +
+          cliente.ID +
+          "/" +
+          cliente.pais +
+          "/" +
+          cliente.telefono
+      );
+
+      // Verificar si la respuesta es exitosa
+      if (!response.ok) {
+        throw new Error(
+          `Error al obtener los clientes: ${response.statusText}`
+        );
+      }
+
+      await cargarClientes();
+      cerrarVentana();
+      window.location.reload();
+    } catch (error) {
+      console.error("Error al obtener los clientes:", error);
+    } finally {
+      cargando = false;
+    }
+  };
+
   // Mostrar detalles del cliente
   function mostrarInfo(cliente) {
     clienteSeleccionado = cliente;
@@ -73,8 +105,9 @@
 
   // Cerrar cualquier ventana activa
   function cerrarVentana() {
-    ventanaActiva = false;
+    ventanaEditarActiva = false;
     ventanaEliminarActiva = false;
+    ventanaActiva = false;
     overlayActivo = false;
     clienteSeleccionado = null;
   }
@@ -84,6 +117,12 @@
     clienteSeleccionado = cliente;
     overlayActivo = true;
     ventanaEliminarActiva = true;
+  }
+
+  function activarVentanaEditar(cliente) {
+    clienteSeleccionado = cliente;
+    overlayActivo = true;
+    ventanaEditarActiva = true;
   }
 
   // Cargar clientes al montar el componente
@@ -150,6 +189,11 @@
         </div>
         <div class="iconos">
           <img
+            src="/img/edit_24dp_CDCDCD_FILL0_wght400_GRAD0_opsz24 (1).png"
+            alt=""
+            on:click={() => activarVentanaEditar(cliente)}
+          />
+          <img
             src="/img/eliminar.png"
             alt="Eliminar"
             on:click={() => activarVentanaEliminar(cliente)}
@@ -164,7 +208,7 @@
 {#if ventanaActiva}
   <div id="ventana" class="activo">
     <img src="/img/defaultfoto2.webp" alt="" width="60" height="60" />
-    <p>Nombre: {clienteSeleccionado.nombre}</p>
+    <h2>{clienteSeleccionado.nombre}</h2>
     <p>Entidad: {clienteSeleccionado.entidad}</p>
     <p>País: {clienteSeleccionado.pais}</p>
     <p>Teléfono: {clienteSeleccionado.telefono}</p>
@@ -192,3 +236,32 @@
   id="overlay"
   class={overlayActivo ? "overlay-activo" : "overlay-inactivo"}
 ></div>
+
+{#if ventanaEditarActiva}
+  <div id="ventana-editar-clientes">
+    <h2>Editar {clienteSeleccionado.nombre}</h2>
+    <label for="pais">País:</label>
+    <input
+      type="text"
+      id="pais"
+      name="pais"
+      bind:value={clienteSeleccionado.pais}
+    />
+    <br />
+    <label for="telefono">Teléfono:</label>
+    <input
+      type="tel"
+      name="telefono"
+      id="telefono"
+      bind:value={clienteSeleccionado.telefono}
+    />
+    <div class="botones">
+      <button type="button" on:click={cerrarVentana}>Cerrar</button>
+      <button
+        type="button"
+        on:click={() => actualizarCliente(clienteSeleccionado)}
+        >Actualizar</button
+      >
+    </div>
+  </div>
+{/if}

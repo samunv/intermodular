@@ -1,4 +1,7 @@
 <script>
+  import "../css/global.css";
+  import "../css/pedidos.css";
+
   let pedidos = [];
   let cargando = true;
   let valor = "";
@@ -28,7 +31,8 @@
       const coincideBusqueda = pedido.fecha_entrega
         .toLowerCase()
         .includes(valor.toLowerCase());
-      const coincideTipo = filtroTipo === "" || pedido.fecha_entrega === filtroTipo;
+      const coincideTipo =
+        filtroTipo === "" || pedido.fecha_entrega === filtroTipo;
 
       return coincideBusqueda && coincideTipo;
     });
@@ -76,9 +80,9 @@
     ];
 
     const filas = pedidos.map((p) => [
-      p.numero_pedido,
-      p.fecha_de_entrega,
-      p.fecha_de_compra,
+      p.numero,
+      p.fecha_entrega,
+      p.fecha_compra,
       p.nombre_producto,
       p.nombre_cliente,
       p.forma_de_pago,
@@ -168,7 +172,9 @@
 >
   <h2>¿Estas seguro de que quieres eliminar el pedido?</h2>
   <div id="caja-botones">
-    <button on:click={() => eliminarPedido(pedidoSeleccionado)}>Confirmar</button>
+    <button on:click={() => eliminarPedido(pedidoSeleccionado)}
+      >Confirmar</button
+    >
     <button on:click={cerrarVentana}>Cancelar</button>
   </div>
 </div>
@@ -179,4 +185,5 @@
 ></div>
 
 <button class="btn-csv" on:click={exportarPedidosCSV}
-  ><img src="/img/archivo-excel.png" alt="" width="30" height="30" /></button>
+  ><img src="/img/archivo-excel.png" alt="" width="30" height="30" /></button
+>

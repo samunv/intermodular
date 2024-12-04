@@ -1,4 +1,7 @@
 <script>
+  import "../css/global.css";
+  import "../css/inventario.css";
+
   let productos = [];
   let cargando = true;
   let activarFiltros = false;
@@ -145,4 +148,5 @@
 ></div>
 
 <button class="btn-csv" on:click={exportarProductosCSV}
-  ><img src="/img/archivo-excel.png" alt="" width="30" height="30" /></button>
+  ><img src="/img/archivo-excel.png" alt="" width="30" height="30" /></button
+>
