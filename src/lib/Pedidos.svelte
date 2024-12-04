@@ -7,6 +7,7 @@
   let valor = "";
   let filtroTipo = ""; // Estado del filtro ("" para mostrar todos)
   let ventanaCrearActiva = false;
+  let ventanaEditarActiva = false;
 
   const cargarPedidos = async () => {
     try {
@@ -26,6 +27,43 @@
   };
 
   cargarPedidos();
+  const actualizarPedidos = async (pedido) => {
+    // Verificar que tanto 'numero' como 'cantidad' estén definidos y sean válidos
+    if ( !pedido.cantidad) {
+    alert("Por favor, asegúrate de ingresar valores válidos.");
+    return;
+  }
+  try {
+    const response = await fetch(
+      "http://localhost:3080/actualizar/pedidos/" +
+          pedido.numero +
+          "/" +
+          pedido.cantidad
+    );
+    // Verificar si la respuesta es exitosa
+    if (!response.ok) {
+      throw new Error(
+        `Error al obtener los clientes: ${response.statusText}`
+      );
+    }
+    await cargarPedidos();
+    cerrarVentana();
+    window.location.reload();
+  } catch (error) {
+    console.error("Error al obtener los pedidos:", error);
+  } finally {
+    cargando = false;
+  }
+};
+
+function activarVentanaEditar(pedido) {
+    pedidoSeleccionado = pedido;
+    overlayActivo = true;
+    ventanaEditarActiva = true;
+    console.log(pedidoSeleccionado);  // Verifica que el campo 'numero' está presente
+
+  }
+
   let ID_cliente = "";
   let ID_producto = "";
   let cantidad = "";
@@ -90,11 +128,19 @@
   }
 
   function cerrarVentana() {
+    ventanaEditarActiva = false;
     ventanaActiva = false;
     ventanaEliminarActiva = false;
     overlayActivo = false;
     pedidoSeleccionado = null;
     ventanaCrearActiva=false;
+    ID_cliente = "";
+    ID_producto = "";
+    cantidad = "";
+    fecha_compra = "";
+    fecha_entrega = "";
+    forma_de_pago = "";
+
   }
 
   function activarVentanaEliminar(pedido) {
@@ -189,13 +235,12 @@
     <p>No se encontraron pedidos.</p>
   {:else}
   <div class="cards" id="crear-pedido" on:click={activarVentanaCrear}>
-    Crear nuevo pedido
-    <img
-      src="/img/add_circle_24dp_WHITE_FILL0_wght400_GRAD0_opsz24.png"
-      alt=""
-      width="24"
-      height="24"
-    />
+    Crear nuevo pedido<img
+        src="/img/add_circle_24dp_WHITE_FILL0_wght400_GRAD0_opsz24.png"
+        alt=""
+         width="24"
+              height="24"
+      />
   </div>
     {#each pedidosFiltrados() as pedido}
       <div class="pedido-card">
@@ -205,11 +250,12 @@
         <div class="botones-card-pedidos">
           <button on:click={() => mostrarInfo(pedido)}
             ><img
-              src="/img/iconoinfo.png"
-              alt="Info"
-              width="24"
+            src="/img/iconoinfo.png"
+            alt="Detalles"
+             width="24"
               height="24"
-            /></button
+            on:click={() => activarVentanaEditar(pedido)}
+          /></button
           >
           <button on:click={() => activarVentanaEliminar(pedido)}
             ><img
@@ -224,20 +270,28 @@
     {/each}
   {/if}
 </div>
+{#if ventanaEditarActiva}
+  <div id="detalle-pedido">
+    <p>
+      <label for="cantidad">Stock:</label><br />
+      <input
+        type="number"
+        id="cantidad"
+        bind:value={pedidoSeleccionado.cantidad}
+        aria-label="Cantidad en stock"
+      /> Uds.
+    </p>
 
-<div id="ventana" style="display: {ventanaActiva ? 'block' : 'none'}">
-  <h3>Detalles del Pedido</h3>
-  {#if pedidoSeleccionado}
-    <p>Número de pedido: {pedidoSeleccionado.numero}</p>
-    <p>Cliente: {pedidoSeleccionado.nombre_cliente}</p>
-    <p>Producto: {pedidoSeleccionado.nombre_producto}</p>
-    <p>Cantidad: {pedidoSeleccionado.cantidad}</p>
-    <p>Fecha de entrega: {pedidoSeleccionado.fecha_entrega}</p>
-    <p>Forma de pago: {pedidoSeleccionado.forma_de_pago}</p>
-    <button on:click={cerrarVentana}>Cerrar</button>
-  {/if}
-</div>
-
+    <div class="botones">
+      <button on:click={cerrarVentana}>Cerrar</button>
+      <button
+        type="button"
+        on:click={() => actualizarPedidos(pedidoSeleccionado)}
+        >Actualizar</button
+      >
+    </div>
+  </div>
+{/if}
 <div
   id="ventanaEliminar"
   style="display: {ventanaEliminarActiva ? 'block' : 'none'}"

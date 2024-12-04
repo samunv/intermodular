@@ -53,7 +53,7 @@
     cerrarVentana();
     window.location.reload();
     } catch (error) {
-      console.error("Error al obtener los clientes:", error);
+      console.error("Error al obtener los pedidos:", error);
     } finally {
       cargando = false;
     }

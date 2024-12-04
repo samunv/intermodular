@@ -1,159 +1,216 @@
 
 #contenedor-principal-pedidos {
-    color: var(--text-color);
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: stretch;
-    margin-top: 50px;
-    margin-bottom: 50px;
-    width: 70%;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .cards {
-    background-color: var(--main-color);
-    width: 250px;
-    font-size: 16px;
-    margin: 20px;
-    border-radius: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-content: center;
-    align-items: center;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+.cards {
+  background-color: var(--main-color);
+  width: 250px;
+  font-size: 16px;
+  margin: 20px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 
 }
+.pedido-card {
+  background-color: var(--main-color);
+  font-size: 16px;
+  margin: 20px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  color: var(--text-color);
+
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+.botones-card-pedidos {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.botones-card-pedidos button {
+  color: var(--text-color);
+  padding: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+}
+
+.botones-card-pedidos button:hover {
+  opacity: 0.5;
+}
+#crear-pedido {
+  color: white;
+  background-color: var(--azul-proyecto);
+  text-align: center;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+#crear-pedido:hover {
+  cursor: pointer;
+  background-color: #0056b3;
+}
+
+#ventana-crear-pedido {
+  background-color: var(--main-color);
+  color: var(--text-color);
+  position: fixed;
+  padding: 50px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+#ventana-crear-pedido label {
+  margin-top: 5px;
+}
+
+#ventana-crear-pedido input,
+select {
+  outline: none;
+  padding: 7px;
+  border: 1px #cdcdcd solid;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-color);
+  margin-top: 5px;
+}
+
+#ventana-crear-pedido .botones {
+  display: flex;
+  flex-direction: row;
+  margin-top: 20px;
+}
+
+#ventana-crear-pedido button {
+  font-weight: bold;
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: var(--azul-proyecto);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+#ventana-crear-pedido button:hover {
+  background-color: #0056b3;
+}
+
+#ventana-crear-pedido h2 {
+  margin: 10px;
+}
+
+#detalle-pedido input {
+  outline: none;
+  padding: 7px;
+  border: 1px #cdcdcd solid;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-color);
+  margin-top: 5px;
+}
+
+#detalle-pedido p {
+  margin-top: 10px;
+}
+
+#detalle-pedido {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--main-color);
+  padding: 20px;
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  z-index: 1002;
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+  text-align: center;
+}
+
+#detalle-pedido h2 {
+  margin: 20px;
+}
+
+#detalle-pedido button {
+  font-weight: bold;
+  padding: 10px 20px;
+  margin: 5px;
+  background-color: var(--azul-proyecto);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+#detalle-pedido button:hover {
+  background-color: #0056b3;
+  opacity: 1;
+}
+
+#detalle-pedido .botones {
+  margin: 20px;
+}
+
+@media (max-width:800px) {
+  #contenedor-principal-pedidos {
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 50px;
+  }
+
   .pedido-card {
-    background-color: var(--main-color);
-    font-size: 16px;
-    margin: 20px;
-    border-radius: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    color: var(--text-color);
-  
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .botones-card-pedidos {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-  
-  .botones-card-pedidos button {
-    color: var(--text-color);
-    padding: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  
-  }
-  
-  .botones-card-pedidos button:hover {
-    opacity: 0.5;
-  }
-  #crear-pedido {
-    color: white;
-    background-color: var(--azul-proyecto);
-    text-align: center;
-    font-weight: bold;
-    transition: all 0.3s ease;
-  }
-  
-  #crear-pedido:hover {
-    cursor: pointer;
-    background-color: #0056b3;
-  }
-  
-  #ventana-crear-pedido {
-    background-color: var(--main-color);
-    color: var(--text-color);
-    position: fixed;
-    padding: 50px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1001;
-    border-radius: 15px;
-    display: flex;
     flex-direction: column;
+    transform: scale(0.8);
+  }
+
+  main {
+    padding: 0%;
+  }
+
+  .botones-card-pedidos {
+    margin: 5px;
+    display: flex;
     justify-content: center;
     align-items: center;
-    text-align: center;
   }
-  
-  #ventana-crear-pedido label {
-    margin-top: 5px;
-  }
-  
-  #ventana-crear-pedido input,
-  select {
-    outline: none;
-    padding: 7px;
-    border: 1px #cdcdcd solid;
-    border-radius: 5px;
-    background: transparent;
-    color: var(--text-color);
-    margin-top: 5px;
-  }
-  
-  #ventana-crear-pedido .botones {
-    display: flex;
-    flex-direction: row;
-    margin-top: 20px;
-  }
-  
-  #ventana-crear-pedido button {
-    font-weight: bold;
-    padding: 10px 20px;
-    margin: 5px;
-    background-color: var(--azul-proyecto);
-    color: white;
-    border: none;
-    border-radius: 15px;
-    cursor: pointer;
-  }
-  
-  #ventana-crear-pedido button:hover {
-    background-color: #0056b3;
-  }
-  
-  #ventana-crear-pedido h2 {
-    margin: 10px;
-  }
-  
-  @media (max-width:800px) {
-    #contenedor-principal-pedidos {
-      width: 100%;
-      margin-top: 20px;
-      margin-bottom: 50px;
-    }
-  
-    .pedido-card {
-      flex-direction: column;
-      transform: scale(0.8);
-    }
-  
-    main {
-      padding: 0%;
-    }
-  
-    .botones-card-pedidos {
-      margin: 5px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  }
+}

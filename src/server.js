@@ -96,11 +96,11 @@ const actualizarProducto = async (id, cantidad, precio_unitario ) => {
     throw error;
   }
 };
-const actualizarPedido = async (id, cantidad, ) => {
+const actualizarPedidos = async (numero, cantidad, ) => {
   try {
     const actualizar = await db.query(
-      `UPDATE productos SET cantidad = ?  WHERE ID=?`,
-      [cantidad,  id]
+      `UPDATE pedidos SET cantidad = ?  WHERE numero=?`,
+      [cantidad,  numero]
     );
     return actualizar;
   } catch (error) {
@@ -300,6 +300,17 @@ app.get("/actualizar/productos/:id/:cantidad/:precio_unitario", async (req, res)
     });
   }
 });
+app.put("/actualizar/pedidos/:numero/:cantidad", async (req, res) => {
+  const { numero, cantidad } = req.params;
+  try {
+    const result = await actualizarPedidos(numero, cantidad);
+    res.json({ mensaje: "Pedido actualizado", result });
+  } catch (error) {
+    console.error("Error al actualizar pedido:", error);
+    res.status(500).json({ error: "Error al actualizar el pedido" });
+  }
+});
+
 
 
 // Iniciar el servidor
