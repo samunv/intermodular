@@ -17,7 +17,7 @@
   // Función para cargar los clientes desde el endpoint
   const cargarClientes = async () => {
     try {
-      const response = await fetch("http://localhost:3070/clientes");
+      const response = await fetch("http://localhost:3080/clientes");
 
       // Verificar si la respuesta es exitosa
       if (!response.ok) {
@@ -49,7 +49,7 @@
   const eliminarCliente = async (cliente) => {
     try {
       const response = await fetch(
-        "http://localhost:3070/eliminar/clientes/" + cliente.ID
+        "http://localhost:3080/eliminar/clientes/" + cliente.ID
       );
 
       // Verificar si la respuesta es exitosa
@@ -72,7 +72,7 @@
   const actualizarCliente = async (cliente) => {
     try {
       const response = await fetch(
-        "http://localhost:3070/actualizar/clientes/" +
+        "http://localhost:3080/actualizar/clientes/" +
           cliente.ID +
           "/" +
           cliente.pais +
@@ -104,7 +104,7 @@
   const crearCliente = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3070/crear/clientes/" +
+        "http://localhost:3080/crear/clientes/" +
           nombre +
           "/" +
           pais +
@@ -146,6 +146,10 @@
     ventanaActiva = false;
     overlayActivo = false;
     clienteSeleccionado = null;
+    nombre = "";
+    pais = "";
+    entidad = "";
+    telefono = "";
   }
 
   // Activar la ventana para confirmar eliminación
@@ -239,7 +243,12 @@
   {:else}
     <div class="cards" id="crear-cliente" on:click={activarVentanaCrear}>
       Crear nuevo cliente
-      <img src="/img/add_circle_24dp_WHITE_FILL0_wght400_GRAD0_opsz24.png" alt="" width="24" height="24">
+      <img
+        src="/img/add_circle_24dp_WHITE_FILL0_wght400_GRAD0_opsz24.png"
+        alt=""
+        width="24"
+        height="24"
+      />
     </div>
     {#each clientesFiltrados() as cliente}
       <div id="card" class="cards">
@@ -380,7 +389,18 @@
     />
     <div class="botones">
       <button type="button" on:click={cerrarVentana}>Cancelar</button>
-      <button type="button" on:click={() => crearCliente()}> Crear </button>
+      <button
+        type="button"
+        on:click={() => {
+          if (nombre && pais && entidad && telefono) {
+            crearCliente();
+          } else {
+            alert("Por favor, completa todos los campos requeridos.");
+          }
+        }}
+      >
+        Crear
+      </button>
     </div>
   </div>
 {/if}

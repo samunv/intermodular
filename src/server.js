@@ -80,7 +80,7 @@ const actualizarCliente = async (id, pais, telefono) => {
     );
     return actualizar;
   } catch (error) {
-    console.error("Error al obtener los productos:", error);
+    console.error("Error al actualizar cliente:", error);
     throw error;
   }
 };
@@ -93,7 +93,20 @@ const crearCliente = async (nombre, pais, entidad, telefono) => {
     );
     return "Cliente creado exitosamente";
   } catch (error) {
-    console.error("Error al obtener los productos:", error);
+    console.error("Error al crear cliente:", error);
+    throw error;
+  }
+};
+
+const crearProducto= async (nombre, fabricante, cantidad, precio_unitario, foto) => {
+  try {
+    await db.query(
+      `INSERT INTO productos(nombre, fabricante, cantidad, precio_unitario, foto) VALUES(?, ?, ?, ?, ?)`,
+      [nombre, fabricante, cantidad, precio_unitario, foto]
+    );
+    return "Producto creado exitosamente";
+  } catch (error) {
+    console.error("Error al crear producto:", error);
     throw error;
   }
 };
@@ -168,7 +181,7 @@ app.get("/eliminar/:tabla/:id", async (req, res) => {
   } catch (error) {
     console.error("Error al manejar la solicitud:", error);
     res.status(500).json({
-      error: "Error interno al obtener los clientes",
+      error: "Error interno al eliminar un registro.",
       detalle: error.message,
     });
   }
@@ -205,7 +218,24 @@ app.get(
   }
 );
 
+app.get(
+  "/crear/productos/:nombre/:fabricante/:cantidad/:precio_unitario/:foto",
+  async (req, res) => {
+    try {
+      const { nombre, fabricante, cantidad, precio_unitario, foto } = req.params;
+      const crear = await crearProducto(nombre, fabricante, cantidad, precio_unitario, foto);
+      res.json(crear);
+    } catch (error) {
+      console.error("Error al manejar la solicitud:", error);
+      res.status(500).json({
+        error: "Error interno al obtener los productos",
+        detalle: error.message,
+      });
+    }
+  }
+);
+
 // Iniciar el servidor
-app.listen(3070, () => {
-  console.log("Backend listening on port http://localhost:3070");
+app.listen(3080, () => {
+  console.log("Backend listening on port http://localhost:3080");
 });

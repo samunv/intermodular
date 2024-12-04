@@ -9,7 +9,7 @@
 
   const cargarPedidos = async () => {
     try {
-      const response = await fetch("http://localhost:3070/pedidos"); // Fetch al endpoint
+      const response = await fetch("http://localhost:3080/pedidos"); // Fetch al endpoint
       if (!response.ok) {
         throw new Error("Error al obtener los pedidos");
       }
@@ -66,7 +66,7 @@
   const eliminarPedido = async (pedido) => {
     try {
       const response = await fetch(
-        "http://localhost:3070/eliminar/pedidos/" + pedido.numero
+        "http://localhost:3080/eliminar/pedidos/" + pedido.numero
       );
 
       // Verificar si la respuesta es exitosa
