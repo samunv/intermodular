@@ -73,7 +73,9 @@
 
       // Verificar si la respuesta es exitosa
       if (!response.ok) {
-        throw new Error(`Error al obtener los pedidos: ${response.statusText}`);
+        throw new Error(
+          `Error al obtener los pedidos: ${response.statusText}`
+        );
       }
 
       await cargarPedidos();

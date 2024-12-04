@@ -37,6 +37,27 @@
   };
 
   cargarProductos();
+  const actualizarProducto = async (producto) => {
+  if (!producto.cantidad || !producto.precio_unitario) {
+    alert("Por favor, asegúrate de ingresar valores válidos.");
+    return;
+  }
+  try {
+    const response = await fetch(
+      `http://localhost:3080/actualizar/productos/${producto.ID}/${producto.cantidad}/${producto.precio_unitario}`
+    );
+    if (!response.ok) {
+      throw new Error(`Error al actualizar el producto: ${response.statusText}`);
+    }
+    await cargarProductos();
+    cerrarVentana();
+    window.location.reload();
+    } catch (error) {
+      console.error("Error al obtener los clientes:", error);
+    } finally {
+      cargando = false;
+    }
+};
 
   const eliminarProducto = async (productoSeleccionado) => {
     try {
@@ -240,9 +261,12 @@
     </p>
     <div class="botones">
       <button on:click={cerrarVentana}>Cerrar</button>
-      <button>Actualizar</button>
+      <button
+        type="button"
+        on:click={() => actualizarProducto(productoSeleccionado)}
+        >Actualizar</button
+      >
     </div>
-    
   </div>
 {/if}
 

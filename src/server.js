@@ -84,6 +84,18 @@ const actualizarCliente = async (id, pais, telefono) => {
     throw error;
   }
 };
+const actualizarProducto = async (id, cantidad, precio_unitario ) => {
+  try {
+    const actualizar = await db.query(
+      `UPDATE productos SET cantidad = ?, precio_unitario= ? WHERE ID=?`,
+      [cantidad, precio_unitario, id]
+    );
+    return actualizar;
+  } catch (error) {
+    console.error("Error al actualizar producto:", error);
+    throw error;
+  }
+};
 
 const crearCliente = async (nombre, pais, entidad, telefono) => {
   try {
@@ -234,6 +246,19 @@ app.get(
     }
   }
 );
+app.get("/actualizar/productos/:id/:cantidad/:precio_unitario", async (req, res) => {
+  try {
+    const { id, cantidad, precio_unitario } = req.params;
+    const actualizar = await actualizarProducto(id, cantidad, precio_unitario);
+    res.json(actualizar);
+  } catch (error) {
+    console.error("Error al manejar la solicitud:", error);
+    res.status(500).json({
+      error: "Error interno al obtener los productos ",
+      detalle: error.message,
+    });
+  }
+});
 
 // Iniciar el servidor
 app.listen(3080, () => {
