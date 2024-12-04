@@ -6,6 +6,7 @@
   let cargando = true;
   let valor = "";
   let filtroTipo = ""; // Estado del filtro ("" para mostrar todos)
+  let ventanaCrearActiva = false;
 
   const cargarPedidos = async () => {
     try {
@@ -25,6 +26,44 @@
   };
 
   cargarPedidos();
+  let ID_cliente = "";
+  let ID_producto = "";
+  let cantidad = "";
+  let fecha_compra = "";
+  let fecha_entrega = "";
+  let forma_de_pago = "";
+
+  const crearPedido = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3080/crear/pedidos/" +
+          ID_cliente +
+          "/" +
+          ID_producto +
+          "/" +
+          cantidad +
+          "/" +
+          fecha_compra +
+          "/" +
+          fecha_entrega +
+          "/" +
+          forma_de_pago
+      );
+    
+    if (!response.ok) {
+      throw new Error(`Error al crear el pedido: ${response.statusText}`);
+    }
+   
+    await cargarPedidos();
+      cerrarVentana();
+      window.location.reload();
+    } catch (error) {
+      console.error("Error al obtener los pedidos:", error);
+    } finally {
+      cargando = false;
+    }
+  };
+
 
   const pedidosFiltrados = () => {
     return pedidos.filter((pedido) => {
@@ -55,6 +94,7 @@
     ventanaEliminarActiva = false;
     overlayActivo = false;
     pedidoSeleccionado = null;
+    ventanaCrearActiva=false;
   }
 
   function activarVentanaEliminar(pedido) {
@@ -62,12 +102,16 @@
     overlayActivo = true;
     ventanaEliminarActiva = true;
   }
+  function activarVentanaCrear() {
+    ventanaCrearActiva = true;
+    overlayActivo = true;
+  }
 
   const eliminarPedido = async (pedido) => {
     try {
       const response = await fetch(
 
-        "http://localhost:3070/eliminar/pedidos/" + pedido.numero_pedido
+        "http://localhost:3080/eliminar/pedidos/" + pedido.numero_pedido
 
       );
 
@@ -144,6 +188,15 @@
   {:else if pedidosFiltrados().length === 0}
     <p>No se encontraron pedidos.</p>
   {:else}
+  <div class="cards" id="crear-pedido" on:click={activarVentanaCrear}>
+    Crear nuevo pedido
+    <img
+      src="/img/add_circle_24dp_WHITE_FILL0_wght400_GRAD0_opsz24.png"
+      alt=""
+      width="24"
+      height="24"
+    />
+  </div>
     {#each pedidosFiltrados() as pedido}
       <div class="pedido-card">
         <h3>{pedido.nombre_cliente}</h3>
@@ -202,6 +255,82 @@
   id="overlay"
   class={overlayActivo ? "overlay-activo" : "overlay-inactivo"}
 ></div>
+
+{#if ventanaCrearActiva}
+  <div id="ventana-crear-pedido">
+    <h2>Crear nuevo Pedido</h2>
+
+    <label for="ID_cliente">ID Cliente</label>
+    <input
+      type="number"
+      id="ID_cliente"
+      bind:value={ID_cliente}
+      required
+    />
+    <br />
+
+    <label for="ID_producto">ID Producto</label>
+    <input
+      type="number"
+      id="ID_producto"
+      bind:value={ID_producto}
+      required
+    />
+    <br />
+
+    <label for="cantidad">Cantidad</label>
+    <input
+      type="number"
+      id="cantidad"
+      bind:value={cantidad}
+      required
+      min="1"
+    />
+    <br />
+
+    <label for="fecha_compra">Fecha de Compra</label>
+    <input
+      type="date"
+      id="fecha_compra"
+      bind:value={fecha_compra}
+      required
+    />
+    <br />
+
+    <label for="fecha_entrega">Fecha de Entrega</label>
+    <input
+      type="date"
+      id="fecha_entrega"
+      bind:value={fecha_entrega}
+      required
+    />
+    <br />
+
+    <label for="forma_de_pago">Forma de Pago</label>
+    <select id="forma_de_pago" bind:value={forma_de_pago} required>
+      <option value="" disabled selected>Seleccione una forma de pago</option>
+      <option value="Efectivo">Efectivo</option>
+      <option value="Tarjeta de crédito">Tarjeta de crédito</option>
+    </select>
+    <br />
+
+    <div class="botones">
+      <button type="button" on:click={cerrarVentana}>Cancelar</button>
+      <button
+        type="button"
+        on:click={() => {
+          if (ID_cliente && ID_producto && cantidad && fecha_compra && fecha_entrega && forma_de_pago) {
+            crearPedido();
+          } else {
+            alert("Por favor, completa todos los campos requeridos.");
+          }
+        }}
+      >
+        Crear
+      </button>
+    </div>
+  </div>
+{/if}
 
 <button class="btn-csv" on:click={exportarPedidosCSV}
   ><img src="/img/archivo-excel.png" alt="" width="30" height="30" /></button

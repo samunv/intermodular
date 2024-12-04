@@ -96,6 +96,18 @@ const actualizarProducto = async (id, cantidad, precio_unitario ) => {
     throw error;
   }
 };
+const actualizarPedido = async (id, cantidad, ) => {
+  try {
+    const actualizar = await db.query(
+      `UPDATE productos SET cantidad = ?  WHERE ID=?`,
+      [cantidad,  id]
+    );
+    return actualizar;
+  } catch (error) {
+    console.error("Error al actualizar pedido:", error);
+    throw error;
+  }
+};
 
 const crearCliente = async (nombre, pais, entidad, telefono) => {
   try {
@@ -109,6 +121,20 @@ const crearCliente = async (nombre, pais, entidad, telefono) => {
     throw error;
   }
 };
+const crearPedido = async (ID_cliente, ID_producto, cantidad, fecha_compra, fecha_entrega, forma_de_pago ) => {
+  try {
+    await db.query (
+      `INSERT INTO pedidos (ID_cliente, ID_producto, cantidad, fecha_compra, fecha_entrega, forma_de_pago)
+      VALUES (?, ?, ?, ?, ?, ?)`,
+      [ID_cliente, ID_producto, cantidad, fecha_compra, fecha_entrega, forma_de_pago]
+    );
+    return { mensaje: "Pedido creado exitosamente" };
+  } catch (error) {
+    console.error("Error al crear pedido:", error);
+    throw new Error("Error al crear el pedido en la base de datos");
+  }
+};
+
 
 const crearProducto= async (nombre, fabricante, cantidad, precio_unitario, foto) => {
   try {
@@ -229,6 +255,21 @@ app.get(
     }
   }
 );
+app.get("/crear/pedidos/:ID_cliente/:ID_producto/:cantidad/:fecha_compra/:fecha_entrega/:forma_de_pago",
+  async (req, res) => {
+    try {
+      const { ID_cliente, ID_producto, cantidad, fecha_compra, fecha_entrega, forma_de_pago } = req.params;
+      const crear = await crearPedido(ID_cliente,ID_producto,cantidad,fecha_compra,fecha_entrega,forma_de_pago);
+      res.json(crear);
+    } catch (error) {
+      console.error("Error al manejar la solicitud:", error);
+      res.status(500).json({
+        error: "Error interno al crear el pedido",
+        detalle: error.message,
+      });
+    }
+  }
+);
 
 app.get(
   "/crear/productos/:nombre/:fabricante/:cantidad/:precio_unitario/:foto",
@@ -259,6 +300,7 @@ app.get("/actualizar/productos/:id/:cantidad/:precio_unitario", async (req, res)
     });
   }
 });
+
 
 // Iniciar el servidor
 app.listen(3080, () => {
