@@ -66,7 +66,7 @@
   const eliminarPedido = async (pedido) => {
     try {
       const response = await fetch(
-        "http://localhost:3070/eliminar/pedidos/" + pedido.ID
+        "http://localhost:3070/eliminar/pedidos/" + pedido.numero
       );
 
       // Verificar si la respuesta es exitosa
