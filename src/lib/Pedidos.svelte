@@ -176,6 +176,7 @@
     <p>Número de pedido: {pedidoSeleccionado.numero}</p>
     <p>Cliente: {pedidoSeleccionado.nombre_cliente}</p>
     <p>Producto: {pedidoSeleccionado.nombre_producto}</p>
+    <p>Cantidad: {pedidoSeleccionado.cantidad}</p>
     <p>Fecha de entrega: {pedidoSeleccionado.fecha_entrega}</p>
     <p>Forma de pago: {pedidoSeleccionado.forma_de_pago}</p>
     <button on:click={cerrarVentana}>Cerrar</button>

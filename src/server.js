@@ -43,18 +43,17 @@ const obtenerClientes = async () => {
 const obtenerPedidos = async () => {
   try {
     const [pedidos] = await db.query(`
-      SELECT p.*,
-        c.nombre AS nombre_cliente,
-        pr.nombre AS nombre_producto,
-        p.forma_de_pago
-      FROM 
-        pedidos p
-      JOIN 
-        clientes c ON p.ID_cliente = c.ID
-      JOIN 
-        pedido_producto pp ON p.numero = pp.numero_pedido
-      JOIN 
-        productos pr ON pp.ID_producto = pr.ID
+      SELECT 
+  p.numero AS numero_pedido,
+  c.nombre AS nombre_cliente,
+  pr.nombre AS nombre_producto,
+  p.cantidad,
+  p.fecha_compra,
+  p.fecha_entrega,
+  p.forma_de_pago
+FROM pedidos p
+JOIN clientes c ON p.ID_cliente = c.ID
+JOIN productos pr ON p.ID_producto = pr.ID;
     `);
     return pedidos;
   } catch (error) {
