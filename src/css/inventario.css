@@ -36,7 +36,19 @@
     opacity: 0.5;
 }
 
+#detalle-producto input {
+    outline: none;
+    padding: 7px;
+    border: 1px #cdcdcd solid;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--text-color);
+    margin-top: 5px;
+}
 
+#detalle-producto p {
+    margin-top: 10px;
+}
 
 #detalle-producto,
 #confirmar-eliminacion {
@@ -62,7 +74,6 @@
     margin: 20px;
 }
 
-#detalle-producto button,
 #confirmar-eliminacion button {
     margin: 20px;
     padding: 8px 12px;
@@ -75,7 +86,27 @@
     cursor: pointer;
 }
 
-#detalle-producto button:hover,
+
+#detalle-producto button {
+    font-weight: bold;
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: var(--azul-proyecto);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+}
+
+#detalle-producto button:hover {
+    background-color: #0056b3;
+    opacity: 1;
+}
+
+#detalle-producto .botones {
+    margin: 20px;
+}
+
 #confirmar-eliminacion button:hover {
     opacity: 0.5;
 }

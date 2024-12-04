@@ -9,7 +9,7 @@
   let filtroFabricante = ""; // Estado del filtro ("" para mostrar todos)
   let ventanaEliminarActiva = false;
   let ventanaCrearActiva = false;
-  let ventanaActiva = false;
+  let ventanaEditarActiva = false;
   let overlayActivo = false;
 
   let productoSeleccionado = null;
@@ -94,14 +94,14 @@
     });
   };
 
-  function mostrarInfo(producto) {
+  function activarVentanaEditar(producto) {
     productoSeleccionado = producto;
     overlayActivo = true;
-    ventanaActiva = true;
+    ventanaEditarActiva = true;
   }
 
   function cerrarVentana() {
-    ventanaActiva = false;
+    ventanaEditarActiva = false;
     ventanaEliminarActiva = false;
     ventanaCrearActiva = false;
     overlayActivo = false;
@@ -196,7 +196,7 @@
         <h3>{producto.nombre}</h3>
         <p>Fabricante: {producto.fabricante}</p>
         <p>Stock: {producto.cantidad}</p>
-        <p>Precio: ${producto.precio_unitario}</p>
+        <p>Precio: ${producto.precio_unitario}€/ud.</p>
         <!-- Contenedor de iconos -->
         <div class="iconos-productos">
           <!-- Icono para mostrar detalles -->
@@ -208,7 +208,7 @@
           <img
             src="/img/iconoinfo.png"
             alt="Detalles"
-            on:click={() => mostrarInfo(producto)}
+            on:click={() => activarVentanaEditar(producto)}
           />
         </div>
       </div>
@@ -216,14 +216,33 @@
   {/if}
 </div>
 
-{#if ventanaActiva}
+{#if ventanaEditarActiva}
   <div id="detalle-producto">
-    <h2>{productoSeleccionado.nombre}</h2>
-    <p>Fabricante: {productoSeleccionado.fabricante}</p>
-    <p>Cantidad: {productoSeleccionado.cantidad}</p>
-    <p>País: {productoSeleccionado.pais_fabricacion}</p>
-    <p>Precio: ${productoSeleccionado.precio_unitario}</p>
-    <button on:click={cerrarVentana}>Cerrar</button>
+    <h2>{productoSeleccionado.nombre} - {productoSeleccionado.fabricante}</h2>
+    
+    <p>
+      <label for="cantidad">Stock:</label><br />
+      <input
+        type="number"
+        id="cantidad"
+        bind:value={productoSeleccionado.cantidad}
+        aria-label="Cantidad en stock"
+      /> Uds.
+    </p>
+    <p>
+      <label for="precio_unitario">Precio Unitario:</label><br />
+      <input
+        type="number"
+        id="precio_unitario"
+        bind:value={productoSeleccionado.precio_unitario}
+        aria-label="Precio unitario"
+      /> €
+    </p>
+    <div class="botones">
+      <button on:click={cerrarVentana}>Cerrar</button>
+      <button>Actualizar</button>
+    </div>
+    
   </div>
 {/if}
 
