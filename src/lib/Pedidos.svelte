@@ -63,12 +63,28 @@
     ventanaEliminarActiva = true;
   }
 
-  function eliminarPedido(pedido) {
-    alert("Se ha eliminado el pedido número: " + pedido.numero);
-    pedidos = pedidos.filter((p) => p.numero !== pedido.numero);
-    window.location.reload();
-  }
+  const eliminarPedido = async (pedido) => {
+    try {
+      const response = await fetch(
+        "http://localhost:3070/eliminar/pedidos/" + pedido.ID
+      );
 
+      // Verificar si la respuesta es exitosa
+      if (!response.ok) {
+        throw new Error(
+          `Error al obtener los pedidos: ${response.statusText}`
+        );
+      }
+
+      await cargarPedidos();
+      cerrarVentana();
+      window.location.reload();
+    } catch (error) {
+      console.error("Error al obtener los clientes:", error);
+    } finally {
+      cargando = false;
+    }
+  };
   function exportarPedidosCSV() {
     const encabezados = [
       "Número de pedido",
