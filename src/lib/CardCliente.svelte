@@ -1,7 +1,7 @@
 <script>
   import "../css/clientes.css";
   import "../css/global.css";
-  
+
   let clientes = [];
   let cargando = true;
   let activarFiltros = false;
@@ -12,6 +12,7 @@
   let clienteSeleccionado = null;
   let ventanaEliminarActiva = false;
   let ventanaEditarActiva = false;
+  let ventanaCrearActiva = false;
 
   // Función para cargar los clientes desde el endpoint
   const cargarClientes = async () => {
@@ -96,6 +97,40 @@
     }
   };
 
+  let nombre = "";
+  let pais = "";
+  let entidad = "";
+  let telefono = "";
+  const crearCliente = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3070/crear/clientes/" +
+          nombre +
+          "/" +
+          pais +
+          "/" +
+          entidad +
+          "/" +
+          telefono
+      );
+
+      // Verificar si la respuesta es exitosa
+      if (!response.ok) {
+        throw new Error(
+          `Error al obtener los clientes: ${response.statusText}`
+        );
+      }
+
+      await cargarClientes();
+      cerrarVentana();
+      window.location.reload();
+    } catch (error) {
+      console.error("Error al obtener los clientes:", error);
+    } finally {
+      cargando = false;
+    }
+  };
+
   // Mostrar detalles del cliente
   function mostrarInfo(cliente) {
     clienteSeleccionado = cliente;
@@ -107,6 +142,7 @@
   function cerrarVentana() {
     ventanaEditarActiva = false;
     ventanaEliminarActiva = false;
+    ventanaCrearActiva = false;
     ventanaActiva = false;
     overlayActivo = false;
     clienteSeleccionado = null;
@@ -125,8 +161,37 @@
     ventanaEditarActiva = true;
   }
 
+  function activarVentanaCrear() {
+    ventanaCrearActiva = true;
+    overlayActivo = true;
+  }
+
   // Cargar clientes al montar el componente
   cargarClientes();
+
+  function exportarClientesCSV() {
+    const encabezados = ["ID", "Nombre", "País", "Entidad", "Teléfono"];
+
+    const filas = clientes.map((cliente) => [
+      cliente.ID, // ID del cliente
+      cliente.nombre, // Nombre del cliente
+      cliente.pais, // País del cliente
+      cliente.entidad, // Entidad del cliente
+      cliente.telefono, // Teléfono del cliente
+    ]);
+
+    const contenidoCSV = [encabezados, ...filas]
+      .map((fila) => fila.join(","))
+      .join("\n");
+
+    const blob = new Blob([contenidoCSV], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "clientes.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 </script>
 
 <div id="buscador-filtros">
@@ -172,6 +237,10 @@
   {:else if clientesFiltrados().length === 0}
     <p>No se encontraron clientes.</p>
   {:else}
+    <div class="cards" id="crear-cliente" on:click={activarVentanaCrear}>
+      Crear nuevo cliente
+      <img src="/img/add_circle_24dp_WHITE_FILL0_wght400_GRAD0_opsz24.png" alt="" width="24" height="24">
+    </div>
     {#each clientesFiltrados() as cliente}
       <div id="card" class="cards">
         <div class="foto-texto" on:click={() => mostrarInfo(cliente)}>
@@ -265,3 +334,57 @@
     </div>
   </div>
 {/if}
+
+{#if ventanaCrearActiva}
+  <div id="ventana-crear-cliente">
+    <h2>Crear nuevo Cliente</h2>
+
+    <label for="nombre">Nombre</label>
+    <input
+      type="text"
+      id="nombre"
+      bind:value={nombre}
+      required
+      minlength="5"
+      maxlength="15"
+    />
+    <br />
+
+    <label for="pais">País</label>
+    <input
+      type="text"
+      id="pais"
+      bind:value={pais}
+      required
+      minlength="5"
+      maxlength="15"
+    />
+    <br />
+
+    <label for="entidad">Entidad</label>
+    <select id="entidad" bind:value={entidad} required>
+      <option value="" disabled selected>Seleccione una entidad</option>
+      <option value="Empresa">Empresa</option>
+      <option value="Individual">Individual</option>
+    </select>
+    <br />
+
+    <label for="telefono">Teléfono</label>
+    <input
+      type="tel"
+      id="telefono"
+      bind:value={telefono}
+      required
+      minlength="5"
+      maxlength="15"
+    />
+    <div class="botones">
+      <button type="button" on:click={cerrarVentana}>Cancelar</button>
+      <button type="button" on:click={() => crearCliente()}> Crear </button>
+    </div>
+  </div>
+{/if}
+
+<button class="btn-csv" on:click={exportarClientesCSV}
+  ><img src="/img/archivo-excel.png" alt="" width="30" height="30" /></button
+>

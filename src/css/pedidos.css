@@ -70,10 +70,4 @@
       justify-content: center;
       align-items: center;
     }
-  
-    .btn-csv {
-      left: 80%;
-      top: 80%;
-      transform: scale(0.8);
-    }
   }

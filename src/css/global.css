@@ -119,3 +119,72 @@
     outline: none;
   
   }
+
+  .btn-csv {
+    background-color: var(--azul-proyecto);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    padding: 5px;
+    position: fixed;
+    top: 85%;
+    left: 90%;
+    z-index: 998;
+    transform: translate(-11%, -6%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  
+  }
+  
+  .btn-csv:hover {
+    background-color: #0056b3;
+  }
+
+  @media (max-width:800px) {
+
+    .btn-csv {
+      left: 80%;
+      top: 80%;
+      transform: scale(0.8);
+    }
+
+    
+    
+      #buscador-filtros {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-top: 30px;
+      }
+    
+      #contenedor-buscador {
+        transform: scale(0.8);
+      }
+    
+      footer {
+        display: flex;
+      }
+    
+      nav {
+        display: none;
+      }
+    
+      #contenedor-principal {
+        color: var(--text-color);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-top: 30px;
+        padding-bottom: 50px;
+    
+    
+      }
+    
+      #contenedor-filtros {
+        transform: scale(0.8);
+      }
+  }

@@ -75,13 +75,24 @@ const obtenerProductos = async () => {
 
 const actualizarCliente = async (id, pais, telefono) => {
   try {
-    const actualizar = await db.query(`UPDATE clientes SET pais = ?, telefono= ? WHERE ID=?`, [
-      pais,
-      telefono,
-      id
-    ]);
+    const actualizar = await db.query(
+      `UPDATE clientes SET pais = ?, telefono= ? WHERE ID=?`,
+      [pais, telefono, id]
+    );
     return actualizar;
+  } catch (error) {
+    console.error("Error al obtener los productos:", error);
+    throw error;
+  }
+};
 
+const crearCliente = async (nombre, pais, entidad, telefono) => {
+  try {
+    await db.query(
+      `INSERT INTO clientes(nombre, pais, entidad, telefono) VALUES(?, ?, ?, ?)`,
+      [nombre, pais, entidad, telefono]
+    );
+    return "Cliente creado exitosamente";
   } catch (error) {
     console.error("Error al obtener los productos:", error);
     throw error;
@@ -164,17 +175,27 @@ app.get("/eliminar/:tabla/:id", async (req, res) => {
   }
 });
 
+app.get("/actualizar/clientes/:id/:pais/:telefono", async (req, res) => {
+  try {
+    const { id, pais, telefono } = req.params;
+    const actualizar = await actualizarCliente(id, pais, telefono);
+    res.json(actualizar);
+  } catch (error) {
+    console.error("Error al manejar la solicitud:", error);
+    res.status(500).json({
+      error: "Error interno al obtener los clientes",
+      detalle: error.message,
+    });
+  }
+});
+
 app.get(
-  "/actualizar/clientes/:id/:pais/:telefono",
+  "/crear/clientes/:nombre/:pais/:entidad/:telefono",
   async (req, res) => {
     try {
-      const { id, pais, telefono } = req.params;
-      const actualizar = await actualizarCliente(
-        id,
-        pais,
-        telefono
-      );
-      res.json(actualizar);
+      const { nombre, pais, entidad, telefono } = req.params;
+      const crear = await crearCliente(nombre, pais, entidad, telefono);
+      res.json(crear);
     } catch (error) {
       console.error("Error al manejar la solicitud:", error);
       res.status(500).json({
