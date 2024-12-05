@@ -216,6 +216,12 @@ select{
     margin-bottom: 50px;
   }
 
+  .seccion-columnas{
+  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
   .pedido-card {
     flex-direction: column;
     transform: scale(0.8);
