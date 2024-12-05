@@ -97,18 +97,7 @@ const actualizarProducto = async (id, cantidad, precio_unitario) => {
   }
 };
 
-const actualizarStock = async (id, cantidad) => {
-  try {
-    const actualizar = await db.query(
-      `UPDATE productos SET cantidad = ? WHERE ID=?`,
-      [cantidad, id]
-    );
-    return actualizar;
-  } catch (error) {
-    console.error("Error al actualizar producto:", error);
-    throw error;
-  }
-};
+
 
 const actualizarPedidos = async (numero, cantidad) => {
   try {
@@ -383,19 +372,7 @@ app.get(
   }
 );
 
-app.get("/actualizar/productos/:id/:cantidad", async (req, res) => {
-  try {
-    const { id, cantidad } = req.params;
-    const actualizar = await actualizarStock(id, cantidad);
-    res.json(actualizar);
-  } catch (error) {
-    console.error("Error al manejar la solicitud:", error);
-    res.status(500).json({
-      error: "Error interno al obtener los productos ",
-      detalle: error.message,
-    });
-  }
-});
+
 app.put("/actualizar/pedidos/:numero/:cantidad", async (req, res) => {
   const { numero, cantidad } = req.params;
   try {
