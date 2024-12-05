@@ -84,7 +84,7 @@ const actualizarCliente = async (id, pais, telefono) => {
     throw error;
   }
 };
-const actualizarProducto = async (id, cantidad, precio_unitario ) => {
+const actualizarProducto = async (id, cantidad, precio_unitario) => {
   try {
     const actualizar = await db.query(
       `UPDATE productos SET cantidad = ?, precio_unitario= ? WHERE ID=?`,
@@ -96,11 +96,25 @@ const actualizarProducto = async (id, cantidad, precio_unitario ) => {
     throw error;
   }
 };
-const actualizarPedidos = async (numero, cantidad, ) => {
+
+const actualizarStock = async (id, cantidad) => {
+  try {
+    const actualizar = await db.query(
+      `UPDATE productos SET cantidad = ? WHERE ID=?`,
+      [cantidad, id]
+    );
+    return actualizar;
+  } catch (error) {
+    console.error("Error al actualizar producto:", error);
+    throw error;
+  }
+};
+
+const actualizarPedidos = async (numero, cantidad) => {
   try {
     const actualizar = await db.query(
       `UPDATE pedidos SET cantidad = ?  WHERE numero=?`,
-      [cantidad,  numero]
+      [cantidad, numero]
     );
     return actualizar;
   } catch (error) {
@@ -121,22 +135,61 @@ const crearCliente = async (nombre, pais, entidad, telefono) => {
     throw error;
   }
 };
-const crearPedido = async (ID_cliente, ID_producto, cantidad, fecha_compra, fecha_entrega, forma_de_pago ) => {
+
+const crearPedido = async (
+  ID_cliente,
+  ID_producto,
+  cantidad,
+  fecha_compra,
+  fecha_entrega,
+  forma_de_pago
+) => {
   try {
-    await db.query (
+    // Verificar stock disponible
+    const [producto] = await db.query("SELECT cantidad FROM productos WHERE ID = ?", [ID_producto]);
+
+    const stockDisponible = producto[0].cantidad;
+    console.log(producto);
+
+    if (stockDisponible < cantidad) {
+      throw new Error("Stock insuficiente para el producto solicitado");
+    }
+
+    // Crear el pedido
+    await db.query(
       `INSERT INTO pedidos (ID_cliente, ID_producto, cantidad, fecha_compra, fecha_entrega, forma_de_pago)
-      VALUES (?, ?, ?, ?, ?, ?)`,
-      [ID_cliente, ID_producto, cantidad, fecha_compra, fecha_entrega, forma_de_pago]
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        ID_cliente,
+        ID_producto,
+        cantidad,
+        fecha_compra,
+        fecha_entrega,
+        forma_de_pago,
+      ]
     );
-    return { mensaje: "Pedido creado exitosamente" };
+
+    // Actualizar el stock
+    const nuevoStock = stockDisponible - cantidad;
+    await db.query(
+      "UPDATE productos SET cantidad = ? WHERE ID = ?",
+      [nuevoStock, ID_producto]
+    );
+
+    return { mensaje: "Pedido creado exitosamente y stock actualizado" };
   } catch (error) {
     console.error("Error al crear pedido:", error);
     throw new Error("Error al crear el pedido en la base de datos");
   }
 };
 
-
-const crearProducto= async (nombre, fabricante, cantidad, precio_unitario, foto) => {
+const crearProducto = async (
+  nombre,
+  fabricante,
+  cantidad,
+  precio_unitario,
+  foto
+) => {
   try {
     await db.query(
       `INSERT INTO productos(nombre, fabricante, cantidad, precio_unitario, foto) VALUES(?, ?, ?, ?, ?)`,
@@ -255,11 +308,26 @@ app.get(
     }
   }
 );
-app.get("/crear/pedidos/:ID_cliente/:ID_producto/:cantidad/:fecha_compra/:fecha_entrega/:forma_de_pago",
+app.get(
+  "/crear/pedidos/:ID_cliente/:ID_producto/:cantidad/:fecha_compra/:fecha_entrega/:forma_de_pago",
   async (req, res) => {
     try {
-      const { ID_cliente, ID_producto, cantidad, fecha_compra, fecha_entrega, forma_de_pago } = req.params;
-      const crear = await crearPedido(ID_cliente,ID_producto,cantidad,fecha_compra,fecha_entrega,forma_de_pago);
+      const {
+        ID_cliente,
+        ID_producto,
+        cantidad,
+        fecha_compra,
+        fecha_entrega,
+        forma_de_pago,
+      } = req.params;
+      const crear = await crearPedido(
+        ID_cliente,
+        ID_producto,
+        cantidad,
+        fecha_compra,
+        fecha_entrega,
+        forma_de_pago
+      );
       res.json(crear);
     } catch (error) {
       console.error("Error al manejar la solicitud:", error);
@@ -275,8 +343,15 @@ app.get(
   "/crear/productos/:nombre/:fabricante/:cantidad/:precio_unitario/:foto",
   async (req, res) => {
     try {
-      const { nombre, fabricante, cantidad, precio_unitario, foto } = req.params;
-      const crear = await crearProducto(nombre, fabricante, cantidad, precio_unitario, foto);
+      const { nombre, fabricante, cantidad, precio_unitario, foto } =
+        req.params;
+      const crear = await crearProducto(
+        nombre,
+        fabricante,
+        cantidad,
+        precio_unitario,
+        foto
+      );
       res.json(crear);
     } catch (error) {
       console.error("Error al manejar la solicitud:", error);
@@ -287,10 +362,31 @@ app.get(
     }
   }
 );
-app.get("/actualizar/productos/:id/:cantidad/:precio_unitario", async (req, res) => {
+app.get(
+  "/actualizar/stock/:id/:cantidad/:precio_unitario",
+  async (req, res) => {
+    try {
+      const { id, cantidad, precio_unitario } = req.params;
+      const actualizar = await actualizarProducto(
+        id,
+        cantidad,
+        precio_unitario
+      );
+      res.json(actualizar);
+    } catch (error) {
+      console.error("Error al manejar la solicitud:", error);
+      res.status(500).json({
+        error: "Error interno al obtener los productos ",
+        detalle: error.message,
+      });
+    }
+  }
+);
+
+app.get("/actualizar/productos/:id/:cantidad", async (req, res) => {
   try {
-    const { id, cantidad, precio_unitario } = req.params;
-    const actualizar = await actualizarProducto(id, cantidad, precio_unitario);
+    const { id, cantidad } = req.params;
+    const actualizar = await actualizarStock(id, cantidad);
     res.json(actualizar);
   } catch (error) {
     console.error("Error al manejar la solicitud:", error);
@@ -317,3 +413,4 @@ app.put("/actualizar/pedidos/:numero/:cantidad", async (req, res) => {
 app.listen(3080, () => {
   console.log("Backend listening on port http://localhost:3080");
 });
+

@@ -2,6 +2,8 @@
   import "../css/global.css";
   import "../css/pedidos.css";
 
+  import { onMount } from "svelte";
+
   let pedidos = [];
   let cargando = true;
   let valor = "";
@@ -27,41 +29,62 @@
   };
 
   cargarPedidos();
+
+  let clientes = []; // Aquí se almacenarán los clientes
+
+  // Función para obtener clientes
+  const obtenerClientes = async () => {
+    try {
+      const response = await fetch("http://localhost:3080/clientes");
+      if (!response.ok) {
+        throw new Error("Error al obtener los clientes");
+      }
+      return await response.json(); // Devuelve los clientes como array
+    } catch (error) {
+      console.error("Error al cargar los clientes:", error);
+      return [];
+    }
+  };
+
+  // Usar onMount para cargar los datos al inicializar el componente
+  onMount(async () => {
+    clientes = await obtenerClientes();
+  });
+
   const actualizarPedidos = async (pedido) => {
     // Verificar que tanto 'numero' como 'cantidad' estén definidos y sean válidos
-    if ( !pedido.cantidad) {
-    alert("Por favor, asegúrate de ingresar valores válidos.");
-    return;
-  }
-  try {
-    const response = await fetch(
-      "http://localhost:3080/actualizar/pedidos/" +
+    if (!pedido.cantidad) {
+      alert("Por favor, asegúrate de ingresar valores válidos.");
+      return;
+    }
+    try {
+      const response = await fetch(
+        "http://localhost:3080/actualizar/pedidos/" +
           pedido.numero +
           "/" +
           pedido.cantidad
-    );
-    // Verificar si la respuesta es exitosa
-    if (!response.ok) {
-      throw new Error(
-        `Error al obtener los clientes: ${response.statusText}`
       );
+      // Verificar si la respuesta es exitosa
+      if (!response.ok) {
+        throw new Error(
+          `Error al obtener los clientes: ${response.statusText}`
+        );
+      }
+      await cargarPedidos();
+      cerrarVentana();
+      window.location.reload();
+    } catch (error) {
+      console.error("Error al obtener los pedidos:", error);
+    } finally {
+      cargando = false;
     }
-    await cargarPedidos();
-    cerrarVentana();
-    window.location.reload();
-  } catch (error) {
-    console.error("Error al obtener los pedidos:", error);
-  } finally {
-    cargando = false;
-  }
-};
+  };
 
-function activarVentanaEditar(pedido) {
+  function activarVentanaEditar(pedido) {
     pedidoSeleccionado = pedido;
     overlayActivo = true;
     ventanaEditarActiva = true;
-    console.log(pedidoSeleccionado);  // Verifica que el campo 'numero' está presente
-
+    console.log(pedidoSeleccionado); // Verifica que el campo 'numero' está presente
   }
 
   let ID_cliente = "";
@@ -87,12 +110,12 @@ function activarVentanaEditar(pedido) {
           "/" +
           forma_de_pago
       );
-    
-    if (!response.ok) {
-      throw new Error(`Error al crear el pedido: ${response.statusText}`);
-    }
-   
-    await cargarPedidos();
+
+      if (!response.ok) {
+        throw new Error(`Error al crear el pedido: ${response.statusText}`);
+      }
+
+      await cargarPedidos();
       cerrarVentana();
       window.location.reload();
     } catch (error) {
@@ -101,7 +124,6 @@ function activarVentanaEditar(pedido) {
       cargando = false;
     }
   };
-
 
   const pedidosFiltrados = () => {
     return pedidos.filter((pedido) => {
@@ -133,14 +155,13 @@ function activarVentanaEditar(pedido) {
     ventanaEliminarActiva = false;
     overlayActivo = false;
     pedidoSeleccionado = null;
-    ventanaCrearActiva=false;
+    ventanaCrearActiva = false;
     ID_cliente = "";
     ID_producto = "";
     cantidad = "";
     fecha_compra = "";
     fecha_entrega = "";
     forma_de_pago = "";
-
   }
 
   function activarVentanaEliminar(pedido) {
@@ -156,16 +177,12 @@ function activarVentanaEditar(pedido) {
   const eliminarPedido = async (pedido) => {
     try {
       const response = await fetch(
-
         "http://localhost:3080/eliminar/pedidos/" + pedido.numero_pedido
-
       );
 
       // Verificar si la respuesta es exitosa
       if (!response.ok) {
-        throw new Error(
-          `Error al obtener los pedidos: ${response.statusText}`
-        );
+        throw new Error(`Error al obtener los pedidos: ${response.statusText}`);
       }
 
       await cargarPedidos();
@@ -234,14 +251,14 @@ function activarVentanaEditar(pedido) {
   {:else if pedidosFiltrados().length === 0}
     <p>No se encontraron pedidos.</p>
   {:else}
-  <div class="cards" id="crear-pedido" on:click={activarVentanaCrear}>
-    Crear nuevo pedido<img
+    <div class="cards" id="crear-pedido" on:click={activarVentanaCrear}>
+      Crear nuevo pedido<img
         src="/img/add_circle_24dp_WHITE_FILL0_wght400_GRAD0_opsz24.png"
         alt=""
-         width="24"
-              height="24"
+        width="24"
+        height="24"
       />
-  </div>
+    </div>
     {#each pedidosFiltrados() as pedido}
       <div class="pedido-card">
         <h3>{pedido.nombre_cliente}</h3>
@@ -250,12 +267,12 @@ function activarVentanaEditar(pedido) {
         <div class="botones-card-pedidos">
           <button on:click={() => mostrarInfo(pedido)}
             ><img
-            src="/img/iconoinfo.png"
-            alt="Detalles"
-             width="24"
+              src="/img/iconoinfo.png"
+              alt="Detalles"
+              width="24"
               height="24"
-            on:click={() => activarVentanaEditar(pedido)}
-          /></button
+              on:click={() => activarVentanaEditar(pedido)}
+            /></button
           >
           <button on:click={() => activarVentanaEliminar(pedido)}
             ><img
@@ -314,50 +331,29 @@ function activarVentanaEditar(pedido) {
   <div id="ventana-crear-pedido">
     <h2>Crear nuevo Pedido</h2>
 
-    <label for="ID_cliente">ID Cliente</label>
-    <input
-      type="number"
-      id="ID_cliente"
-      bind:value={ID_cliente}
-      required
-    />
+    <label for="ID_cliente">Cliente:</label>
+    <select name="ID_cliente" id="ID_cliente" bind:value={ID_cliente}>
+      {#each clientes as cliente}
+        <option value={cliente.ID}>{cliente.nombre}</option>
+      {/each}
+    </select>
+
     <br />
 
     <label for="ID_producto">ID Producto</label>
-    <input
-      type="number"
-      id="ID_producto"
-      bind:value={ID_producto}
-      required
-    />
+    <input type="number" id="ID_producto" bind:value={ID_producto} required />
     <br />
 
     <label for="cantidad">Cantidad</label>
-    <input
-      type="number"
-      id="cantidad"
-      bind:value={cantidad}
-      required
-      min="1"
-    />
+    <input type="number" id="cantidad" bind:value={cantidad} required min="1" />
     <br />
 
     <label for="fecha_compra">Fecha de Compra</label>
-    <input
-      type="date"
-      id="fecha_compra"
-      bind:value={fecha_compra}
-      required
-    />
+    <input type="date" id="fecha_compra" bind:value={fecha_compra} required />
     <br />
 
     <label for="fecha_entrega">Fecha de Entrega</label>
-    <input
-      type="date"
-      id="fecha_entrega"
-      bind:value={fecha_entrega}
-      required
-    />
+    <input type="date" id="fecha_entrega" bind:value={fecha_entrega} required />
     <br />
 
     <label for="forma_de_pago">Forma de Pago</label>
@@ -373,7 +369,14 @@ function activarVentanaEditar(pedido) {
       <button
         type="button"
         on:click={() => {
-          if (ID_cliente && ID_producto && cantidad && fecha_compra && fecha_entrega && forma_de_pago) {
+          if (
+            ID_cliente &&
+            ID_producto &&
+            cantidad &&
+            fecha_compra &&
+            fecha_entrega &&
+            forma_de_pago
+          ) {
             crearPedido();
           } else {
             alert("Por favor, completa todos los campos requeridos.");

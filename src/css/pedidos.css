@@ -191,6 +191,11 @@ select {
   margin: 20px;
 }
 
+select{
+  background-color: var(--main-color);
+  color: var(--text-color);
+}
+
 @media (max-width:800px) {
   #contenedor-principal-pedidos {
     width: 100%;
