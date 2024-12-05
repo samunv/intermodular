@@ -97,6 +97,7 @@
 
 #ventana-crear-pedido label {
   margin-top: 5px;
+  text-align: left;
 }
 
 #ventana-crear-pedido input,
@@ -134,10 +135,22 @@ select {
 #ventana-crear-pedido h2 {
   margin: 10px;
 }
+.seccion-columnas{
+  
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.columnas{
+ margin: 15px;
+  display: flex;
+  flex-direction: column;
+
+}
 
 #detalle-pedido input {
   outline: none;
-  padding: 7px;
+  padding: 5px;
   border: 1px #cdcdcd solid;
   border-radius: 5px;
   background: transparent;
@@ -168,13 +181,13 @@ select {
 }
 
 #detalle-pedido h2 {
-  margin: 20px;
+  margin-top: 10px;
 }
 
 #detalle-pedido button {
   font-weight: bold;
   padding: 10px 20px;
-  margin: 5px;
+  margin-top: 20px;
   background-color: var(--azul-proyecto);
   color: white;
   border: none;

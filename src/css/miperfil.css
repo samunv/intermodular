@@ -11,6 +11,7 @@
   
   }
   
+  
   .Clase-Perfil p {
     padding: 0;
     margin: 0;
@@ -85,84 +86,10 @@
     border-top: 1px solid var(--secondary-color);
   }
   
-  @media (max-width: 800px) {
-    body {
-      font-size: 15px;
-      /* Disminuye el tamaño de fuente para móviles */
-    }
-  
-    h1 {
-      text-align: left;
-      padding-left: 50px;
-      font-size: 1.5em;
-    }
-  
-  
-    .container {
-      max-width: 100%;
-      /* Ocupa todo el ancho en móviles */
-      border: none;
-      /* Opcional: elimina el borde en pantallas pequeñas */
-    }
-  
-    .Clase-Perfil {
-      width: 100%;
-      max-width: 300px;
-      display: flex;
-      flex-direction: row;
-      /* Cambia a disposición horizontal */
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 20px;
-      text-align: left;
-      margin-top: 15px;
-    }
-  
-    .section-principal {
-      transform: scale(0.8);
-      flex-direction: column;
-      /* Apila los elementos en una columna */
-      padding: 10px;
-    }
-  
-    .info {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      max-width: 300px;
-      justify-content: space-between;
-      /* Asegura que se mantenga horizontal */
-      padding: 10px 20px;
-    }
-  
-    .imginfo {
-      margin-right: 0;
-      margin-bottom: 15px;
-      /* Agrega espacio debajo de la imagen */
-    }
-  
-    .informacion {
-      width: 340px;
-      /* Ajusta el ancho de las tarjetas de información */
-      margin-top: 10px;
-      height: auto;
-      /* Permite que la altura se ajuste automáticamente */
-    }
-  
-    .icon {
-      font-size: 20px;
-      /* Ajusta el tamaño de los iconos en la barra de navegación */
-    }
-  
-    .ventana-edicion {
-      z-index: 1010;
-    }
-  
-  }
   
   /******************/
   .ventana-edicion {
-    z-index: 1002;
+    z-index: 1010;
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -238,3 +165,79 @@
     border: none;
     cursor: pointer;
   }
+
+  @media (max-width: 800px) {
+    body {
+      font-size: 15px;
+      /* Disminuye el tamaño de fuente para móviles */
+    }
+  
+    h1 {
+      text-align: left;
+      padding-left: 50px;
+      font-size: 1.5em;
+    }
+  
+  
+    .container {
+      max-width: 100%;
+      /* Ocupa todo el ancho en móviles */
+      border: none;
+      /* Opcional: elimina el borde en pantallas pequeñas */
+    }
+  
+    .Clase-Perfil {
+      width: 100%;
+      max-width: 300px;
+      display: flex;
+      flex-direction: row;
+      /* Cambia a disposición horizontal */
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      text-align: left;
+      margin-top: 15px;
+    }
+  
+    .section-principal {
+      transform: scale(0.8);
+      flex-direction: column;
+      /* Apila los elementos en una columna */
+      padding: 10px;
+    }
+  
+    .info {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: 300px;
+      justify-content: space-between;
+      /* Asegura que se mantenga horizontal */
+      padding: 10px 20px;
+    }
+  
+    .imginfo {
+      margin-right: 0;
+      margin-bottom: 15px;
+      /* Agrega espacio debajo de la imagen */
+    }
+  
+    .informacion {
+      width: 340px;
+      /* Ajusta el ancho de las tarjetas de información */
+      margin-top: 10px;
+      height: auto;
+      /* Permite que la altura se ajuste automáticamente */
+    }
+  
+    .icon {
+      font-size: 20px;
+      /* Ajusta el tamaño de los iconos en la barra de navegación */
+    }
+  
+    .ventana-edicion {
+      z-index: 1010;
+    }
+  
+  }
+  
