@@ -50,7 +50,8 @@ const obtenerPedidos = async () => {
   p.cantidad,
   p.fecha_compra,
   p.fecha_entrega,
-  p.forma_de_pago
+  p.forma_de_pago,
+  p.total
 FROM pedidos p
 JOIN clientes c ON p.ID_cliente = c.ID
 JOIN productos pr ON p.ID_producto = pr.ID;
@@ -84,6 +85,7 @@ const actualizarCliente = async (id, pais, telefono) => {
     throw error;
   }
 };
+
 const actualizarProducto = async (id, cantidad, precio_unitario) => {
   try {
     const actualizar = await db.query(
@@ -96,9 +98,6 @@ const actualizarProducto = async (id, cantidad, precio_unitario) => {
     throw error;
   }
 };
-
-
-
 
 const crearCliente = async (nombre, pais, entidad, telefono) => {
   try {
@@ -119,11 +118,15 @@ const crearPedido = async (
   cantidad,
   fecha_compra,
   fecha_entrega,
-  forma_de_pago
+  forma_de_pago,
+  total
 ) => {
   try {
     // Verificar stock disponible
-    const [producto] = await db.query("SELECT cantidad FROM productos WHERE ID = ?", [ID_producto]);
+    const [producto] = await db.query(
+      "SELECT cantidad FROM productos WHERE ID = ?",
+      [ID_producto]
+    );
 
     const stockDisponible = producto[0].cantidad;
     console.log(producto);
@@ -134,8 +137,8 @@ const crearPedido = async (
 
     // Crear el pedido
     await db.query(
-      `INSERT INTO pedidos (ID_cliente, ID_producto, cantidad, fecha_compra, fecha_entrega, forma_de_pago)
-       VALUES (?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO pedidos (ID_cliente, ID_producto, cantidad, fecha_compra, fecha_entrega, forma_de_pago, total)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
         ID_cliente,
         ID_producto,
@@ -143,15 +146,16 @@ const crearPedido = async (
         fecha_compra,
         fecha_entrega,
         forma_de_pago,
+        total,
       ]
     );
 
     // Actualizar el stock
     const nuevoStock = stockDisponible - cantidad;
-    await db.query(
-      "UPDATE productos SET cantidad = ? WHERE ID = ?",
-      [nuevoStock, ID_producto]
-    );
+    await db.query("UPDATE productos SET cantidad = ? WHERE ID = ?", [
+      nuevoStock,
+      ID_producto,
+    ]);
 
     return { mensaje: "Pedido creado exitosamente y stock actualizado" };
   } catch (error) {
@@ -286,7 +290,7 @@ app.get(
   }
 );
 app.get(
-  "/crear/pedidos/:ID_cliente/:ID_producto/:cantidad/:fecha_compra/:fecha_entrega/:forma_de_pago",
+  "/crear/pedidos/:ID_cliente/:ID_producto/:cantidad/:fecha_compra/:fecha_entrega/:forma_de_pago/:total",
   async (req, res) => {
     try {
       const {
@@ -296,6 +300,7 @@ app.get(
         fecha_compra,
         fecha_entrega,
         forma_de_pago,
+        total,
       } = req.params;
       const crear = await crearPedido(
         ID_cliente,
@@ -303,7 +308,8 @@ app.get(
         cantidad,
         fecha_compra,
         fecha_entrega,
-        forma_de_pago
+        forma_de_pago,
+        total
       );
       res.json(crear);
     } catch (error) {
@@ -360,12 +366,7 @@ app.get(
   }
 );
 
-
-
-
-
 // Iniciar el servidor
 app.listen(3080, () => {
   console.log("Backend listening on port http://localhost:3080");
 });
-

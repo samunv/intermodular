@@ -18,10 +18,6 @@
       titulo = "Mi Perfil"; // Título predeterminado
     }
   });
-
-
-  // Aplicar iconos del tema
-  const temaGuardado = localStorage.getItem("temaCambiado");
 </script>
 
 <footer id="navegador-bajo">

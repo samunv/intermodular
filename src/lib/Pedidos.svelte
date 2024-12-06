@@ -11,6 +11,21 @@
   let ventanaCrearActiva = false;
   let ventanaEditarActiva = false;
 
+  let ID_cliente = "";
+  let ID_producto = "";
+  let cantidad = 1; // Valor por defecto para evitar valores no válidos
+  let fecha_compra = "";
+  let fecha_entrega = "";
+  let forma_de_pago = "";
+  let precioUnitario = 0;
+  let total = 0;
+
+  let ventanaActiva = false;
+  let overlayActivo = false;
+
+  let pedidoSeleccionado = null;
+  let ventanaEliminarActiva = false;
+
   const cargarPedidos = async () => {
     try {
       const response = await fetch("http://localhost:3080/pedidos"); // Fetch al endpoint
@@ -46,10 +61,6 @@
     }
   };
 
-  // Usar onMount para cargar los datos al inicializar el componente
-  onMount(async () => {
-    clientes = await obtenerClientes();
-  });
   let productos = [];
   const obtenerProductos = async () => {
     try {
@@ -64,10 +75,25 @@
     }
   };
 
-  // Usar onMount para cargar los datos al inicializar el componente
   onMount(async () => {
+    clientes = await obtenerClientes();
     productos = await obtenerProductos();
   });
+
+  $: {
+    // Buscamos el producto seleccionado en la lista de productos,
+    // usando el ID seleccionado (ID_producto).
+    const productoSeleccionado = productos.find((p) => p.ID === ID_producto);
+
+    // Si se encuentra un producto, asignamos su precio_unitario a precioUnitario.
+    // Si no se encuentra (por ejemplo, ID_producto está vacío), asignamos 0.
+    precioUnitario = productoSeleccionado
+      ? productoSeleccionado.precio_unitario
+      : 0;
+
+    // Calculamos el total multiplicando el precio unitario por la cantidad seleccionada.
+    total = precioUnitario * cantidad;
+  }
 
   function activarVentanaEditar(pedido) {
     pedidoSeleccionado = pedido;
@@ -75,42 +101,18 @@
     ventanaEditarActiva = true;
     overlayActivo = true;
   }
-
-  let ID_cliente = "";
-  let ID_producto = "";
-  let cantidad = "";
-  let fecha_compra = "";
-  let fecha_entrega = "";
-  let forma_de_pago = "";
-
   const crearPedido = async () => {
     try {
       const response = await fetch(
-        "http://localhost:3080/crear/pedidos/" +
-          ID_cliente +
-          "/" +
-          ID_producto +
-          "/" +
-          cantidad +
-          "/" +
-          fecha_compra +
-          "/" +
-          fecha_entrega +
-          "/" +
-          forma_de_pago,
+        `http://localhost:3080/crear/pedidos/${ID_cliente}/${ID_producto}/${cantidad}/${fecha_compra}/${fecha_entrega}/${forma_de_pago}/${total}`
       );
-
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(`Error al crear el pedido: ${response.statusText}`);
-      }
-
       await cargarPedidos();
       cerrarVentana();
       window.location.reload();
     } catch (error) {
-      console.error("Error al obtener los pedidos:", error);
-    } finally {
-      cargando = false;
+      console.error("Error al crear el pedido:", error);
     }
   };
 
@@ -125,12 +127,6 @@
       return coincideBusqueda && coincideTipo;
     });
   };
-
-  let ventanaActiva = false;
-  let overlayActivo = false;
-
-  let pedidoSeleccionado = null;
-  let ventanaEliminarActiva = false;
 
   function mostrarInfo(pedido) {
     pedidoSeleccionado = pedido;
@@ -147,7 +143,7 @@
     ventanaCrearActiva = false;
     ID_cliente = "";
     ID_producto = "";
-    cantidad = "";
+    cantidad = 1;
     fecha_compra = "";
     fecha_entrega = "";
     forma_de_pago = "";
@@ -166,7 +162,7 @@
   const eliminarPedido = async (pedido) => {
     try {
       const response = await fetch(
-        "http://localhost:3080/eliminar/pedidos/" + pedido.numero_pedido,
+        "http://localhost:3080/eliminar/pedidos/" + pedido.numero_pedido
       );
 
       // Verificar si la respuesta es exitosa
@@ -252,6 +248,7 @@
       <div class="pedido-card">
         <h3>{pedido.nombre_cliente}</h3>
         <p>Producto: {pedido.nombre_producto}</p>
+        <p>x {pedido.cantidad} uds.</p>
         <p>Entrega: {pedido.fecha_entrega}</p>
         <div class="botones-card-pedidos">
           <button on:click={() => mostrarInfo(pedido)}
@@ -285,6 +282,7 @@
     <p>Fecha de compra: {pedidoSeleccionado.fecha_compra}</p>
     <p>Fecha de entrega: {pedidoSeleccionado.fecha_entrega}</p>
     <p>Forma de pago: {pedidoSeleccionado.forma_de_pago}</p>
+    <p>Total: {pedidoSeleccionado.total}€</p>
 
     <button on:click={cerrarVentana}>Cerrar</button>
   </div>
@@ -314,33 +312,33 @@
     <div class="seccion-columnas">
       <div class="columnas">
         <label for="ID_cliente">Cliente:</label>
-        <select name="ID_cliente" id="ID_cliente" bind:value={ID_cliente}>
+        <select id="ID_cliente" bind:value={ID_cliente} required>
           {#each clientes as cliente}
             <option value={cliente.ID}>{cliente.nombre}</option>
           {/each}
         </select>
-
         <br />
+
         <label for="ID_producto">Producto:</label>
-        <select name="ID_producto" id="ID_producto" bind:value={ID_producto}>
+        <select id="ID_producto" bind:value={ID_producto} required>
           {#each productos as producto}
             <option value={producto.ID}>{producto.nombre}</option>
           {/each}
         </select>
         <br />
 
-        <label for="cantidad">Cantidad</label>
+        <label for="cantidad">Cantidad:</label>
         <input
           type="number"
           id="cantidad"
           bind:value={cantidad}
-          required
           min="1"
+          required
         />
         <br />
       </div>
       <div class="columnas">
-        <label for="fecha_compra">Fecha de Compra</label>
+        <label for="fecha_compra">Fecha de Compra:</label>
         <input
           type="date"
           id="fecha_compra"
@@ -349,7 +347,7 @@
         />
         <br />
 
-        <label for="fecha_entrega">Fecha de Entrega</label>
+        <label for="fecha_entrega">Fecha de Entrega:</label>
         <input
           type="date"
           id="fecha_entrega"
@@ -358,39 +356,24 @@
         />
         <br />
 
-        <label for="forma_de_pago">Forma de Pago</label>
+        <label for="forma_de_pago">Forma de Pago:</label>
         <select id="forma_de_pago" bind:value={forma_de_pago} required>
-          <option value="" disabled selected
-            >Seleccione una forma de pago</option
-          >
           <option value="Efectivo">Efectivo</option>
           <option value="Tarjeta de crédito">Tarjeta de crédito</option>
         </select>
         <br />
+
+        
       </div>
+    </div>
+    <div class="precios">
+      <p>Precio unitario: {precioUnitario} €</p>
+      <p>Precio Total: {total.toFixed(2)} €</p>
     </div>
 
     <div class="botones">
-      <button type="button" on:click={cerrarVentana}>Cancelar</button>
-      <button
-        type="button"
-        on:click={() => {
-          if (
-            ID_cliente &&
-            ID_producto &&
-            cantidad &&
-            fecha_compra &&
-            fecha_entrega &&
-            forma_de_pago
-          ) {
-            crearPedido();
-          } else {
-            alert("Por favor, completa todos los campos requeridos.");
-          }
-        }}
-      >
-        Crear
-      </button>
+      <button on:click={cerrarVentana}>Cancelar</button>
+      <button on:click={crearPedido}>Crear</button>
     </div>
   </div>
 {/if}
