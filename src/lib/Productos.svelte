@@ -1,33 +1,37 @@
 <script>
+  // Importación de archivos CSS para el diseño de la página
   import "../css/global.css";
   import "../css/inventario.css";
 
-  let productos = [];
-  let cargando = true;
-  let activarFiltros = false;
-  let valor = "";
-  let filtroFabricante = ""; // Estado del filtro ("" para mostrar todos)
-  let ventanaEliminarActiva = false;
-  let ventanaCrearActiva = false;
-  let ventanaEditarActiva = false;
-  let overlayActivo = false;
+  // Variables para el estado del inventario y la gestión de productos
+  let productos = []; // Lista de productos
+  let cargando = true; // Estado de carga de los productos
+  let valor = ""; // Valor de búsqueda en el buscador
+  let ventanaEliminarActiva = false; // Estado para controlar la ventana de eliminación de producto
+  let ventanaCrearActiva = false; // Estado para controlar la ventana de creación de producto
+  let ventanaEditarActiva = false; // Estado para controlar la ventana de edición de producto
+  let overlayActivo = false; // Estado del overlay para bloquear la interfaz durante las ventanas modales
 
-  let productoSeleccionado = null;
+  let productoSeleccionado = null; // Producto seleccionado para edición o eliminación
 
+  // Variables para los datos del nuevo producto a crear
   let nombre = "";
   let fabricante = "";
   let cantidad = "";
   let precio_unitario = "";
   let foto = "";
 
+  // Función para cargar los productos desde el servidor
   const cargarProductos = async () => {
     try {
+      // Hacemos una petición a la API para obtener los productos
       const response = await fetch("http://localhost:3080/productos");
       if (!response.ok) {
         throw new Error("Error al cargar los productos del servidor");
       }
       const datos = await response.json();
 
+      // Almacenar los datos obtenidos en la variable productos y actualizar el estado de carga
       productos = datos;
       cargando = false;
     } catch (error) {
@@ -36,37 +40,46 @@
     }
   };
 
+  // Cargar productos al inicializar el componente
   cargarProductos();
+
+  // Función para actualizar un producto
   const actualizarProducto = async (producto) => {
-  if (!producto.cantidad || !producto.precio_unitario) {
-    alert("Por favor, asegúrate de ingresar valores válidos.");
-    return;
-  }
-  try {
-    const response = await fetch(
-      `http://localhost:3080/actualizar/productos/${producto.ID}/${producto.cantidad}/${producto.precio_unitario}`
-    );
-    if (!response.ok) {
-      throw new Error(`Error al actualizar el producto: ${response.statusText}`);
+    // Validar si los campos de cantidad y precio son correctos
+    if (!producto.cantidad || !producto.precio_unitario) {
+      alert("Por favor, asegúrate de ingresar valores válidos.");
+      return;
     }
-    await cargarProductos();
-    cerrarVentana();
-    window.location.reload();
+    try {
+      // Hacer una solicitud para actualizar los detalles del producto
+      const response = await fetch(
+        `http://localhost:3080/actualizar/stock/${producto.ID}/${producto.cantidad}/${producto.precio_unitario}`
+      );
+      if (!response.ok) {
+        throw new Error(`Error al actualizar el producto: ${response.statusText}`);
+      }
+      // Recargar los productos y cerrar la ventana de edición
+      await cargarProductos();
+      cerrarVentana();
+      window.location.reload();
     } catch (error) {
       console.error("Error al obtener los pedidos:", error);
     } finally {
       cargando = false;
     }
-};
+  };
 
+  // Función para eliminar un producto
   const eliminarProducto = async (productoSeleccionado) => {
     try {
+      // Hacer una solicitud para eliminar el producto
       const response = await fetch(
         "http://localhost:3080/eliminar/productos/" + productoSeleccionado.ID
       );
       if (!response.ok) {
         throw new Error("Error al cargar los productos del servidor");
       }
+      // Recargar los productos y cerrar la ventana de eliminación
       cerrarVentana();
       window.location.reload();
       cargando = false;
@@ -76,9 +89,11 @@
     }
   };
 
+  // Función para crear un nuevo producto
   const crearProducto = async () => {
     console.log(nombre, fabricante, cantidad, precio_unitario, foto);
     try {
+      // Hacer una solicitud para crear un nuevo producto
       const response = await fetch(
         "http://localhost:3080/crear/productos/" +
           nombre +
@@ -94,6 +109,7 @@
       if (!response.ok) {
         throw new Error("Error al cargar los productos del servidor");
       }
+      // Recargar los productos y cerrar la ventana de creación
       cerrarVentana();
       window.location.reload();
       cargando = false;
@@ -103,24 +119,22 @@
     }
   };
 
+  // Función para filtrar los productos basados en el valor de búsqueda
   const productosFiltrados = () => {
     return productos.filter((producto) => {
-      const coincideBusqueda = producto.nombre
-        .toLowerCase()
-        .includes(valor.toLowerCase());
-      const coincideFabricante =
-        filtroFabricante === "" || producto.fabricante === filtroFabricante;
-
-      return coincideBusqueda && coincideFabricante;
+      // Filtra los productos cuyo nombre incluye el valor de búsqueda (en minúsculas)
+      return producto.nombre.toLowerCase().includes(valor.toLowerCase());
     });
   };
 
+  // Función para activar la ventana de edición de un producto
   function activarVentanaEditar(producto) {
     productoSeleccionado = producto;
     overlayActivo = true;
     ventanaEditarActiva = true;
   }
 
+  // Función para cerrar cualquier ventana activa
   function cerrarVentana() {
     ventanaEditarActiva = false;
     ventanaEliminarActiva = false;
@@ -134,18 +148,22 @@
     foto = "";
   }
 
+  // Función para activar la ventana de eliminación de un producto
   function activarVentanaEliminar(producto) {
     productoSeleccionado = producto;
     overlayActivo = true;
     ventanaEliminarActiva = true;
   }
 
+  // Función para activar la ventana de creación de un nuevo producto
   function activarVentanaCrear() {
     ventanaCrearActiva = true;
     overlayActivo = true;
   }
 
+  // Función para exportar los productos a un archivo CSV
   function exportarProductosCSV() {
+    // Definir los encabezados del archivo CSV
     const encabezados = [
       "ID",
       "Nombre del Producto",
@@ -154,6 +172,7 @@
       "Precio Unitario",
     ];
 
+    // Crear las filas de datos para el CSV
     const filas = productos.map((producto) => [
       producto.ID,
       producto.nombre,
@@ -162,10 +181,12 @@
       producto.precio_unitario,
     ]);
 
+    // Crear el contenido CSV
     const contenidoCSV = [encabezados, ...filas]
       .map((fila) => fila.join(","))
       .join("\n");
 
+    // Crear el archivo CSV y permitir la descarga
     const blob = new Blob([contenidoCSV], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -175,6 +196,7 @@
     URL.revokeObjectURL(url);
   }
 </script>
+
 
 <div id="buscador-filtros">
   <div id="contenedor-buscador">
@@ -187,7 +209,7 @@
     <input
       type="text"
       bind:value={valor}
-      placeholder={"Buscar " + filtroFabricante}
+      placeholder="Buscar productos"
       id="buscador-input"
     />
   </div>
@@ -358,4 +380,4 @@
 
 <button class="btn-csv" on:click={exportarProductosCSV}
   ><img src="/img/archivo-excel.png" alt="" width="30" height="30" /></button
->
+> 

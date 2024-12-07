@@ -1,74 +1,78 @@
 <script>
+  // Importación de los estilos
   import "../css/clientes.css";
   import "../css/global.css";
 
-  let clientes = [];
-  let cargando = true;
-  let activarFiltros = false;
-  let valor = "";
-  let filtroTipo = ""; // Estado del filtro ("" para mostrar todos)
-  let ventanaActiva = false;
-  let overlayActivo = false;
-  let clienteSeleccionado = null;
-  let ventanaEliminarActiva = false;
-  let ventanaEditarActiva = false;
-  let ventanaCrearActiva = false;
+  // Variables de estado
+  let clientes = []; // Lista de clientes cargados desde el servidor
+  let cargando = true; // Indica si los datos están siendo cargados
+  let activarFiltros = false; // Controla la visibilidad de los filtros
+  let valor = ""; // Valor del campo de búsqueda
+  let filtroTipo = ""; // Filtro por tipo de cliente ("" para todos)
+  let ventanaActiva = false; // Indica si la ventana de detalles está activa
+  let overlayActivo = false; // Indica si el overlay (fondo) está activo
+  let clienteSeleccionado = null; // Cliente seleccionado para editar/eliminar
+  let ventanaEliminarActiva = false; // Indica si la ventana de eliminación está activa
+  let ventanaEditarActiva = false; // Indica si la ventana de edición está activa
+  let ventanaCrearActiva = false; // Indica si la ventana de creación está activa
 
-  // Función para cargar los clientes desde el endpoint
+  // Función para cargar los clientes desde el servidor
   const cargarClientes = async () => {
     try {
       const response = await fetch("http://localhost:3080/clientes");
 
-      // Verificar si la respuesta es exitosa
+      // Verifica si la respuesta del servidor es exitosa
       if (!response.ok) {
         throw new Error(
           `Error al obtener los clientes: ${response.statusText}`
         );
       }
 
-      // Asignar los datos obtenidos a la variable clientes
+      // Asigna los datos de la respuesta a la variable 'clientes'
       clientes = await response.json();
     } catch (error) {
       console.error("Error al obtener los clientes:", error);
     } finally {
-      cargando = false;
+      cargando = false; // Cambia el estado de 'cargando' a falso cuando se termina la carga
     }
   };
 
-  // Filtrar clientes en base al buscador y tipo
+  // Función para filtrar los clientes según el valor de búsqueda y el tipo seleccionado
   const clientesFiltrados = () => {
     return clientes.filter((cliente) => {
       const coincideBusqueda = cliente.nombre
         .toLowerCase()
-        .includes(valor.toLowerCase());
-      const coincideTipo = filtroTipo === "" || cliente.entidad === filtroTipo;
-      return coincideBusqueda && coincideTipo;
+        .includes(valor.toLowerCase()); // Filtra por nombre
+      const coincideTipo = filtroTipo === "" || cliente.entidad === filtroTipo; // Filtra por tipo (Empresa o Individual)
+      return coincideBusqueda && coincideTipo; // Devuelve los clientes que coinciden con ambos filtros
     });
   };
 
+  // Función para eliminar un cliente seleccionado
   const eliminarCliente = async (cliente) => {
     try {
       const response = await fetch(
         "http://localhost:3080/eliminar/clientes/" + cliente.ID
       );
 
-      // Verificar si la respuesta es exitosa
+      // Verifica si la respuesta es exitosa
       if (!response.ok) {
         throw new Error(
           `Error al obtener los clientes: ${response.statusText}`
         );
       }
 
-      await cargarClientes();
-      cerrarVentana();
-      window.location.reload();
+      await cargarClientes(); // Vuelve a cargar la lista de clientes
+      cerrarVentana(); // Cierra la ventana activa
+      window.location.reload(); // Recarga la página
     } catch (error) {
       console.error("Error al obtener los clientes:", error);
     } finally {
-      cargando = false;
+      cargando = false; // Cambia el estado de 'cargando' a falso
     }
   };
 
+  // Función para actualizar los datos de un cliente
   const actualizarCliente = async (cliente) => {
     try {
       const response = await fetch(
@@ -80,27 +84,30 @@
           cliente.telefono
       );
 
-      // Verificar si la respuesta es exitosa
+      // Verifica si la respuesta es exitosa
       if (!response.ok) {
         throw new Error(
           `Error al obtener los clientes: ${response.statusText}`
         );
       }
 
-      await cargarClientes();
-      cerrarVentana();
-      window.location.reload();
+      await cargarClientes(); // Vuelve a cargar la lista de clientes
+      cerrarVentana(); // Cierra la ventana activa
+      window.location.reload(); // Recarga la página
     } catch (error) {
       console.error("Error al obtener los clientes:", error);
     } finally {
-      cargando = false;
+      cargando = false; // Cambia el estado de 'cargando' a falso
     }
   };
 
+  // Variables para el formulario de creación de cliente
   let nombre = "";
   let pais = "";
   let entidad = "";
   let telefono = "";
+
+  // Función para crear un nuevo cliente
   const crearCliente = async () => {
     try {
       const response = await fetch(
@@ -114,67 +121,70 @@
           telefono
       );
 
-      // Verificar si la respuesta es exitosa
+      // Verifica si la respuesta es exitosa
       if (!response.ok) {
         throw new Error(
           `Error al obtener los clientes: ${response.statusText}`
         );
       }
 
-      await cargarClientes();
-      cerrarVentana();
-      window.location.reload();
+      await cargarClientes(); // Vuelve a cargar la lista de clientes
+      cerrarVentana(); // Cierra la ventana activa
+      window.location.reload(); // Recarga la página
     } catch (error) {
       console.error("Error al obtener los clientes:", error);
     } finally {
-      cargando = false;
+      cargando = false; // Cambia el estado de 'cargando' a falso
     }
   };
 
-  // Mostrar detalles del cliente
+  // Función para mostrar los detalles de un cliente
   function mostrarInfo(cliente) {
-    clienteSeleccionado = cliente;
-    overlayActivo = true;
-    ventanaActiva = true;
+    clienteSeleccionado = cliente; // Asigna el cliente seleccionado
+    overlayActivo = true; // Activa el overlay
+    ventanaActiva = true; // Activa la ventana de detalles
   }
 
-  // Cerrar cualquier ventana activa
+  // Función para cerrar cualquier ventana activa
   function cerrarVentana() {
-    ventanaEditarActiva = false;
-    ventanaEliminarActiva = false;
-    ventanaCrearActiva = false;
-    ventanaActiva = false;
-    overlayActivo = false;
-    clienteSeleccionado = null;
-    nombre = "";
-    pais = "";
-    entidad = "";
-    telefono = "";
+    ventanaEditarActiva = false; // Cierra la ventana de edición
+    ventanaEliminarActiva = false; // Cierra la ventana de eliminación
+    ventanaCrearActiva = false; // Cierra la ventana de creación
+    ventanaActiva = false; // Cierra la ventana de detalles
+    overlayActivo = false; // Desactiva el overlay
+    clienteSeleccionado = null; // Resetea el cliente seleccionado
+    nombre = ""; // Resetea el valor de 'nombre'
+    pais = ""; // Resetea el valor de 'pais'
+    entidad = ""; // Resetea el valor de 'entidad'
+    telefono = ""; // Resetea el valor de 'telefono'
   }
 
-  // Activar la ventana para confirmar eliminación
+  // Función para activar la ventana de confirmación de eliminación
   function activarVentanaEliminar(cliente) {
-    clienteSeleccionado = cliente;
-    overlayActivo = true;
-    ventanaEliminarActiva = true;
+    clienteSeleccionado = cliente; // Asigna el cliente seleccionado
+    overlayActivo = true; // Activa el overlay
+    ventanaEliminarActiva = true; // Activa la ventana de eliminación
   }
 
+  // Función para activar la ventana de edición de cliente
   function activarVentanaEditar(cliente) {
-    clienteSeleccionado = cliente;
-    overlayActivo = true;
-    ventanaEditarActiva = true;
+    clienteSeleccionado = cliente; // Asigna el cliente seleccionado
+    overlayActivo = true; // Activa el overlay
+    ventanaEditarActiva = true; // Activa la ventana de edición
   }
 
+  // Función para activar la ventana de creación de cliente
   function activarVentanaCrear() {
-    ventanaCrearActiva = true;
-    overlayActivo = true;
+    ventanaCrearActiva = true; // Activa la ventana de creación
+    overlayActivo = true; // Activa el overlay
   }
 
-  // Cargar clientes al montar el componente
+  // Carga los clientes al montar el componente
   cargarClientes();
 
+  // Función para exportar los clientes a un archivo CSV
   function exportarClientesCSV() {
-    const encabezados = ["ID", "Nombre", "País", "Entidad", "Teléfono"];
+    const encabezados = ["ID", "Nombre", "País", "Entidad", "Teléfono"]; // Encabezados del CSV
 
     const filas = clientes.map((cliente) => [
       cliente.ID, // ID del cliente
@@ -184,19 +194,22 @@
       cliente.telefono, // Teléfono del cliente
     ]);
 
+    // Convierte los datos a formato CSV
     const contenidoCSV = [encabezados, ...filas]
       .map((fila) => fila.join(","))
       .join("\n");
 
+    // Crea un archivo CSV y lo descarga
     const blob = new Blob([contenidoCSV], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = "clientes.csv";
     a.click();
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(url); // Revoca la URL del archivo
   }
 </script>
+
 
 <div id="buscador-filtros">
   <div id="contenedor-buscador">

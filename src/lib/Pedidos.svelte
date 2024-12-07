@@ -1,147 +1,156 @@
 <script>
-  import "../css/global.css";
-  import "../css/pedidos.css";
+  // Importación de hojas de estilo
+  import "../css/global.css"; // Estilos globales
+  import "../css/pedidos.css"; // Estilos específicos de pedidos
 
+  // Importación de funciones reactivas de Svelte
   import { onMount } from "svelte";
 
+  /*** Variables de estado ***/
+
+  // Lista de pedidos obtenidos del servidor
   let pedidos = [];
+
+  // Indicador de carga inicial
   let cargando = true;
-  let valor = "";
-  let filtroTipo = ""; // Estado del filtro ("" para mostrar todos)
+
+  // Variables para búsqueda y filtrado
+  let valor = ""; // Valor de búsqueda
+  let filtroTipo = ""; // Filtro de tipo de pedido
+
+  // Estado del overlay y ventanas modales
+  let overlayActivo = false;
   let ventanaCrearActiva = false;
   let ventanaEditarActiva = false;
-
-  let ID_cliente = "";
-  let ID_producto = "";
-  let cantidad = 1; // Valor por defecto para evitar valores no válidos
-  let fecha_compra = "";
-  let fecha_entrega = "";
-  let forma_de_pago = "";
-  let precioUnitario = 0;
-  let total = 0;
-
-  let ventanaActiva = false;
-  let overlayActivo = false;
-
-  let pedidoSeleccionado = null;
   let ventanaEliminarActiva = false;
 
+  // Datos para crear o editar un pedido
+  let ID_cliente = ""; // ID del cliente seleccionado
+  let ID_producto = ""; // ID del producto seleccionado
+  let cantidad = 1; // Cantidad del pedido
+  let fecha_compra = ""; // Fecha de compra
+  let fecha_entrega = ""; // Fecha de entrega
+  let forma_de_pago = ""; // Método de pago
+  let precioUnitario = 0; // Precio unitario del producto
+  let total = 0; // Total calculado del pedido
+
+  // Pedido seleccionado para edición o eliminación
+  let pedidoSeleccionado = null;
+
+  // Listas de datos externos
+  let clientes = []; // Lista de clientes obtenidos del servidor
+  let productos = []; // Lista de productos obtenidos del servidor
+
+  /*** Funciones Asíncronas (CRUD) ***/
+
+  // Cargar pedidos desde el servidor
   const cargarPedidos = async () => {
     try {
-      const response = await fetch("http://localhost:3080/pedidos"); // Fetch al endpoint
-      if (!response.ok) {
-        throw new Error("Error al obtener los pedidos");
-      }
-      const data = await response.json();
-
-      pedidos = data;
-
-      cargando = false;
+      const response = await fetch("http://localhost:3080/pedidos");
+      if (!response.ok) throw new Error("Error al obtener los pedidos");
+      pedidos = await response.json(); // Guardar pedidos obtenidos
     } catch (error) {
-      console.error("Error al cargar los datos:", error);
-      cargando = false;
+      console.error("Error al cargar los pedidos:", error);
+    } finally {
+      cargando = false; // Desactivar indicador de carga
     }
   };
 
-  cargarPedidos();
-
-  let clientes = []; // Aquí se almacenarán los clientes
-
-  // Función para obtener clientes
+  // Obtener la lista de clientes desde el servidor
   const obtenerClientes = async () => {
     try {
       const response = await fetch("http://localhost:3080/clientes");
-      if (!response.ok) {
-        throw new Error("Error al obtener los clientes");
-      }
-      return await response.json(); // Devuelve los clientes como array
+      if (!response.ok) throw new Error("Error al obtener los clientes");
+      return await response.json(); // Devolver lista de clientes
     } catch (error) {
       console.error("Error al cargar los clientes:", error);
       return [];
     }
   };
 
-  let productos = [];
+  // Obtener la lista de productos desde el servidor
   const obtenerProductos = async () => {
     try {
       const response = await fetch("http://localhost:3080/productos");
-      if (!response.ok) {
-        throw new Error("Error al obtener los productos");
-      }
-      return await response.json(); // Devuelve los clientes como array
+      if (!response.ok) throw new Error("Error al obtener los productos");
+      return await response.json(); // Devolver lista de productos
     } catch (error) {
-      console.error("Error al cargar los clientes:", error);
+      console.error("Error al cargar los productos:", error);
       return [];
     }
   };
 
-  onMount(async () => {
-    clientes = await obtenerClientes();
-    productos = await obtenerProductos();
-  });
-
-  $: {
-    // Buscamos el producto seleccionado en la lista de productos,
-    // usando el ID seleccionado (ID_producto).
-    const productoSeleccionado = productos.find((p) => p.ID === ID_producto);
-
-    // Si se encuentra un producto, asignamos su precio_unitario a precioUnitario.
-    // Si no se encuentra (por ejemplo, ID_producto está vacío), asignamos 0.
-    precioUnitario = productoSeleccionado
-      ? productoSeleccionado.precio_unitario
-      : 0;
-
-    // Calculamos el total multiplicando el precio unitario por la cantidad seleccionada.
-    total = precioUnitario * cantidad;
-  }
-
-  function activarVentanaEditar(pedido) {
-    pedidoSeleccionado = pedido;
-
-    ventanaEditarActiva = true;
-    overlayActivo = true;
-  }
+  // Crear un nuevo pedido y recargar la lista
   const crearPedido = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:3080/crear/pedidos/${ID_cliente}/${ID_producto}/${cantidad}/${fecha_compra}/${fecha_entrega}/${forma_de_pago}/${total}`
-      );
-      if (!response.ok)
-        throw new Error(`Error al crear el pedido: ${response.statusText}`);
-      await cargarPedidos();
-      cerrarVentana();
-      window.location.reload();
+      const url = `http://localhost:3080/crear/pedidos/${ID_cliente}/${ID_producto}/${cantidad}/${fecha_compra}/${fecha_entrega}/${forma_de_pago}/${total}`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Error al crear el pedido");
+
+      await cargarPedidos(); // Recargar lista de pedidos
+      cerrarVentana(); // Cerrar ventanas modales
     } catch (error) {
-      alert("Error al crear el pedido. Has seleccionado una cantidad mayor a la del stock existente del producto.")
+      alert("Error al crear el pedido. Revisa los datos.");
       console.error("Error al crear el pedido:", error);
     }
   };
 
-  const pedidosFiltrados = () => {
-    return pedidos.filter((pedido) => {
-      const coincideBusqueda = pedido.fecha_entrega
-        .toLowerCase()
-        .includes(valor.toLowerCase());
-      const coincideTipo =
-        filtroTipo === "" || pedido.fecha_entrega === filtroTipo;
+  // Eliminar un pedido existente y recargar la lista
+  const eliminarPedido = async (pedido) => {
+    try {
+      const url = `http://localhost:3080/eliminar/pedidos/${pedido.numero_pedido}`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Error al eliminar el pedido");
 
-      return coincideBusqueda && coincideTipo;
-    });
+      await cargarPedidos(); // Recargar lista de pedidos
+      cerrarVentana(); // Cerrar ventanas modales
+    } catch (error) {
+      console.error("Error al eliminar el pedido:", error);
+    }
   };
 
-  function mostrarInfo(pedido) {
-    pedidoSeleccionado = pedido;
-    overlayActivo = true;
-    ventanaActiva = true;
+  /*** Lógica Reactiva ***/
+
+  // Calcular el precio unitario y total del pedido seleccionado
+  $: {
+    const productoSeleccionado = productos.find((p) => p.ID === ID_producto);
+    precioUnitario = productoSeleccionado
+      ? productoSeleccionado.precio_unitario
+      : 0;
+    total = precioUnitario * cantidad; // Calcular total
   }
 
+  /*** Control de Ventanas Modales ***/
+
+  // Abrir ventana de creación de pedidos
+  function activarVentanaCrear() {
+    ventanaCrearActiva = true;
+    overlayActivo = true; // Activar overlay
+  }
+
+  // Abrir ventana de edición con el pedido seleccionado
+  function activarVentanaEditar(pedido) {
+    pedidoSeleccionado = pedido;
+    ventanaEditarActiva = true;
+    overlayActivo = true; // Activar overlay
+  }
+
+  // Abrir ventana de confirmación de eliminación
+  function activarVentanaEliminar(pedido) {
+    pedidoSeleccionado = pedido;
+    ventanaEliminarActiva = true;
+    overlayActivo = true; // Activar overlay
+  }
+
+  // Cerrar todas las ventanas modales y restablecer datos
   function cerrarVentana() {
+    ventanaCrearActiva = false;
     ventanaEditarActiva = false;
-    ventanaActiva = false;
     ventanaEliminarActiva = false;
     overlayActivo = false;
+
+    // Restablecer valores de formulario
     pedidoSeleccionado = null;
-    ventanaCrearActiva = false;
     ID_cliente = "";
     ID_producto = "";
     cantidad = 1;
@@ -150,37 +159,29 @@
     forma_de_pago = "";
   }
 
-  function activarVentanaEliminar(pedido) {
-    pedidoSeleccionado = pedido;
-    overlayActivo = true;
-    ventanaEliminarActiva = true;
-  }
-  function activarVentanaCrear() {
-    ventanaCrearActiva = true;
-    overlayActivo = true;
+  // Mostrar información detallada del pedido en una ventana modal
+  function mostrarInfo(pedido) {
+    pedidoSeleccionado = pedido; // Guardar pedido seleccionado
+    ventanaEditarActiva = true; // Activar ventana de detalles
+    overlayActivo = true; // Activar overlay
   }
 
-  const eliminarPedido = async (pedido) => {
-    try {
-      const response = await fetch(
-        "http://localhost:3080/eliminar/pedidos/" + pedido.numero_pedido
-      );
+  /*** Funciones de Utilidad ***/
 
-      // Verificar si la respuesta es exitosa
-      if (!response.ok) {
-        throw new Error(`Error al obtener los pedidos: ${response.statusText}`);
-      }
-
-      await cargarPedidos();
-      cerrarVentana();
-      window.location.reload();
-    } catch (error) {
-      console.error("Error al obtener los clientes:", error);
-    } finally {
-      cargando = false;
-    }
+  // Filtrar pedidos por búsqueda y tipo
+  const pedidosFiltrados = () => {
+    return pedidos.filter((pedido) => {
+      const coincideBusqueda = pedido.fecha_entrega
+        .toLowerCase()
+        .includes(valor.toLowerCase());
+      const coincideTipo =
+        filtroTipo === "" || pedido.fecha_entrega === filtroTipo;
+      return coincideBusqueda && coincideTipo;
+    });
   };
-  function exportarPedidosCSV() {
+
+  // Exportar la lista de pedidos a un archivo CSV
+  const exportarPedidosCSV = () => {
     const encabezados = [
       "Número de pedido",
       "Fecha de entrega",
@@ -188,32 +189,40 @@
       "Producto",
       "Cliente",
       "Forma de pago",
-      "total"
+      "Total",
     ];
 
     const filas = pedidos.map((p) => [
-      p.numero,
+      p.numero_pedido,
       p.fecha_entrega,
       p.fecha_compra,
       p.nombre_producto,
       p.nombre_cliente,
       p.forma_de_pago,
-      p.total
+      p.total,
     ]);
 
+    // Crear archivo CSV
     const contenidoCSV = [encabezados, ...filas]
       .map((fila) => fila.join(","))
       .join("\n");
 
+    // Crear y descargar archivo CSV
     const blob = new Blob([contenidoCSV], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     a.download = "pedidos.csv";
     a.click();
+    URL.revokeObjectURL(url); // Liberar URL temporal
+  };
 
-    URL.revokeObjectURL(url);
-  }
+  // Cargar datos iniciales al montar el componente
+  onMount(async () => {
+    clientes = await obtenerClientes(); // Cargar clientes
+    productos = await obtenerProductos(); // Cargar productos
+    await cargarPedidos(); // Cargar pedidos
+  });
 </script>
 
 <div id="buscador-filtros">
@@ -365,8 +374,6 @@
           <option value="Tarjeta de crédito">Tarjeta de crédito</option>
         </select>
         <br />
-
-        
       </div>
     </div>
     <div class="precios">
