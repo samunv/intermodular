@@ -112,6 +112,7 @@
       cerrarVentana();
       window.location.reload();
     } catch (error) {
+      alert("Error al crear el pedido. Has seleccionado una cantidad mayor a la del stock existente del producto.")
       console.error("Error al crear el pedido:", error);
     }
   };
@@ -187,6 +188,7 @@
       "Producto",
       "Cliente",
       "Forma de pago",
+      "total"
     ];
 
     const filas = pedidos.map((p) => [
@@ -196,6 +198,7 @@
       p.nombre_producto,
       p.nombre_cliente,
       p.forma_de_pago,
+      p.total
     ]);
 
     const contenidoCSV = [encabezados, ...filas]

@@ -151,16 +151,14 @@
       "Nombre del Producto",
       "Fabricante",
       "Cantidad",
-      "País de Fabricación",
       "Precio Unitario",
     ];
 
     const filas = productos.map((producto) => [
       producto.ID,
-      producto.nombre_producto,
+      producto.nombre,
       producto.fabricante,
       producto.cantidad,
-      producto.pais_fabricacion,
       producto.precio_unitario,
     ]);
 
