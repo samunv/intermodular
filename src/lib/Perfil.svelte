@@ -75,7 +75,7 @@
   {#if editRol}
     <div class="ventana-edicion">
       <h3>Editar Rol</h3>
-      <input type="text" bind:value={newRol} maxlength="15" minlength="5" />
+      <input type="text" bind:value={newRol} maxlength="25" minlength="5" />
       <div class="botones-ventana-editar">
         <button on:click={guardarRol}>Guardar</button>
         <button on:click={() => ((editRol = false), (overlayActivo = false))}
