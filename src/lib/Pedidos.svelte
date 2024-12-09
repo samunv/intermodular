@@ -113,11 +113,18 @@
 
   // Calcular el precio unitario y total del pedido seleccionado
   $: {
+    // Buscar el producto seleccionado en la lista de productos
+    // Utiliza el método `find` para encontrar el producto cuyo ID coincide con `ID_producto`
     const productoSeleccionado = productos.find((p) => p.ID === ID_producto);
+
+    // Asignar el precio unitario del producto encontrado,
+    // o 0 si no se encuentra ningún producto con ese ID
     precioUnitario = productoSeleccionado
-      ? productoSeleccionado.precio_unitario
-      : 0;
-    total = precioUnitario * cantidad; // Calcular total
+      ? productoSeleccionado.precio_unitario // Si se encuentra el producto, tomar su precio unitario
+      : 0; // Si no se encuentra, asignar 0 para evitar errores
+
+    // Calcular el total multiplicando el precio unitario por la cantidad
+    total = precioUnitario * cantidad;
   }
 
   /*** Control de Ventanas Modales ***/

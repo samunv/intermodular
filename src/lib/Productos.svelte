@@ -104,7 +104,7 @@
           "/" +
           precio_unitario +
           "/" +
-          foto
+          encodeURIComponent(foto)
       );
       if (!response.ok) {
         throw new Error("Error al cargar los productos del servidor");
