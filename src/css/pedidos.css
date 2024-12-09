@@ -11,6 +11,7 @@
   width: 50%;
   margin-left: auto;
   margin-right: auto;
+  text-align: center;
 }
 .cards {
   background-color: var(--main-color);
@@ -218,13 +219,23 @@ select{
     margin-top: 20px;
     margin-bottom: 50px;
   }
+  #ventana-crear-pedido{
+    width: 90%;
+    transform: translate(-50%, -50%) scale(0.8);
+
+  }
 
   .seccion-columnas{
-  
     display: flex;
     flex-direction: column;
     align-items: center;
+    
   }
+
+  .seccion-columnas .columnas{
+    width: 80%;
+  }
+
   .pedido-card {
     flex-direction: column;
     transform: scale(0.8);
